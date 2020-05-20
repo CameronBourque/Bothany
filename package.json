@@ -1,0 +1,34 @@
+{
+  "name": "bothany",
+  "version": "1.0.0",
+  "description": "Runs a bot which says hello to certain people",
+  "main": "index.js",
+  "dependencies": {
+    "disco-oauth": "^4.2.7",
+    "discord.js": "^12.2.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "ffmpeg": "^0.0.4",
+    "ffmpeg-static": "^4.2.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FrozenLion/Bothany.git"
+  },
+  "keywords": [
+    "bothany"
+  ],
+  "author": "Cameron Bourque",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FrozenLion/Bothany/issues"
+  },
+  "homepage": "https://github.com/FrozenLion/Bothany#readme",
+  "engines": {
+    "node": "12.16.1"
+  }
+}
