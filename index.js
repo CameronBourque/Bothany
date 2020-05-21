@@ -65,6 +65,17 @@ bot.on('voiceStateUpdate', (oldMember, newMember) => {
                            });
                        });
                    }
+               } else if (newMember.member.roles.cache.find( r=> r.name === process.env.SAM_ROLE)) {
+                   console.log(newMember.member.user.username + ' is in the role "' + process.env.SAM_ROLE + '". Joining their channel!');
+
+                   newUserChannel.join().then(connection => {
+                       const soundFile = require("path").join(__dirname, process.env.SAM_SOUNDFILE);
+                       const dispatcher = connection.play(soundFile, {volume: 2.0});
+
+                       dispatcher.on('finish', () => {
+                           newUserChannel.leave();
+                       });
+                   });
                }
            }
        }
