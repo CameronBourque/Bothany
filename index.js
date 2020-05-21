@@ -13,17 +13,35 @@ index.on('voiceStateUpdate', (oldMember, newMember) => {
        let chanName = newUserChannel.name;
        console.log(newMember.member.user.username + ' joined ' + chanName + '!');
 
-       if(!newMember.member.user.bot && newMember.member.roles.cache.find(r => r.name === process.env.ROLE)) {
-           console.log(newMember.member.user.username + ' is in the role "' + process.env.ROLE + '". Joining their channel!');
+       if(!newMember.member.user.bot) {
+           if (newMember.member.roles.cache.find(r => r.name === process.env.HELLO_ROLE)) {
+               console.log(newMember.member.user.username + ' is in the role "' + process.env.HELLO_ROLE + '". Joining their channel!');
 
-           newUserChannel.join().then(connection => {
-              const soundFile = require("path").join(__dirname, process.env.SOUNDFILE);
-              const dispatcher = connection.play(soundFile, {volume: 2.0});
+               newUserChannel.join().then(connection => {
+                   const soundFile = require("path").join(__dirname, process.env.HELLO_SOUNDFILE);
+                   const dispatcher = connection.play(soundFile, {volume: 2.0});
 
-              dispatcher.on('finish', () => {
-                  newUserChannel.leave();
-              });
-           });
+                   dispatcher.on('finish', () => {
+                       newUserChannel.leave();
+                   });
+               });
+           }
+           else if(newMember.member.roles.cache.find(r => r.name === process.env.TRON_ROLE)){
+               newUserChannel.join().then(connection => {
+                   const soundFile = require("path").join(__dirname, process.env.TRON_SOUNDFILE);
+                   const dispatcher = connection.play(soundFile, {volume: 2.0});
+
+                   dispatcher.on('finish', () => {
+                       newUserChannel.leave();
+                   });
+               })
+           }
        }
+
    }
+});
+
+//Message events (FUTURE FEATURE)
+index.on('message', (msg) => {
+    //FILL
 });
