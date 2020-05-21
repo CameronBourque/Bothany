@@ -72,7 +72,15 @@ bot.on('voiceStateUpdate', (oldMember, newMember) => {
    }
 });
 
-//Message events (FUTURE FEATURE)
-bot.on('message', (msg) => {
-    //FILL
+//When someone joins the server
+bot.on('guildMemberAdd', (member) => {
+    let sysChan = member.guild.systemChannel;
+    sysChan.startTyping();
+
+    sysChan.send('What the fuck is up ' + member.user.username + '!')
+        .then(message => console.log('Introduced new member, ' + member.user.username + ' to ' + member.guild.name))
+        .catch(console.error);
+
+    sysChan.stopTyping();
+
 });
