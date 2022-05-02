@@ -108,7 +108,7 @@ bot.on('voiceStateUpdate', (oldMember, newMember) => {
                            const dispatcher = connection.play(soundFile, {volume: 2.0});
 
                            dispatcher.on('finish', () => {
-                               newUserChannel.leave(); 
+                               newUserChannel.leave();
                            });
                        });
                    }
