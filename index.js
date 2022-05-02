@@ -10,9 +10,9 @@ bot.on('voiceStateUpdate', (oldMember, newMember) => {
    let newUserChannel = newMember.channel;
    let oldUserChannel = oldMember.channel;
 
-   if(newUserChannel !== null){
-       if(!newMember.member.user.bot && newUserChannel === oldUserChannel){ //muting and unmuting
-            if(newMember.member.roles.cache.find(r => r.name === process.env.SAD_ROLE) && newMember.selfDeaf){
+   if(newUserChannel !== null){ //VALID CHANNEL SWAP
+       if(!newMember.member.user.bot && newUserChannel === oldUserChannel){ //MUTE AND UNMUTE
+            if(newMember.member.roles.cache.find(r => r.name === process.env.SAD_ROLE) && newMember.selfDeaf){  //SAD
                 console.log(newMember.member.user.username + ' is in the role "' + process.env.SAD_ROLE + '". Playing sad music!');
 
                 newUserChannel.join().then(connection => {
@@ -25,35 +25,13 @@ bot.on('voiceStateUpdate', (oldMember, newMember) => {
                 });
             }
        }
-       else {   //enter and leaving a channel
+       else {   //CHANGING/JOINING CHANNELS
            let chanName = newUserChannel.name;
            console.log(newMember.member.user.username + ' joined ' + chanName + '!');
 
-           if (!newMember.member.user.bot) {
-               if (newMember.member.roles.cache.find(r => r.name === process.env.HELLO_ROLE)) {
-                   console.log(newMember.member.user.username + ' is in the role "' + process.env.HELLO_ROLE + '". Joining their channel!');
-
-                   newUserChannel.join().then(connection => {
-                       const soundFile = require("path").join(__dirname, process.env.HELLO_SOUNDFILE);
-                       const dispatcher = connection.play(soundFile, {volume: 2.0});
-
-                       dispatcher.on('finish', () => {
-                           newUserChannel.leave();
-                       });
-                   });
-               } else if (newMember.member.roles.cache.find(r => r.name === process.env.TRON_ROLE)) {
-                   console.log(newMember.member.user.username + ' is in the role "' + process.env.TRON_ROLE + '". Joining their channel!');
-
-                   newUserChannel.join().then(connection => {
-                       const soundFile = require("path").join(__dirname, process.env.TRON_SOUNDFILE);
-                       const dispatcher = connection.play(soundFile, {volume: 2.0});
-
-                       dispatcher.on('finish', () => {
-                           newUserChannel.leave();
-                       });
-                   });
-               } else if (newMember.member.roles.cache.find( r=> r.name === process.env.AFK_ROLE)) {
-                   if(newUserChannel === newUserChannel.guild.afkChannel){
+           if (!newMember.member.user.bot) {    //NOT A BOT
+               if(newUserChannel === newUserChannel.guild.afkChannel){  //SWITCH TO AFK CHANNEL
+                   if (newMember.member.roles.cache.find( r=> r.name === process.env.AFK_ROLE)) {   //AFK
                        console.log(newMember.member.user.username + ' is in the role "' + process.env.AFK_ROLE + '". Joining their old channel!');
 
                        oldUserChannel.join().then(connection => {
@@ -65,25 +43,71 @@ bot.on('voiceStateUpdate', (oldMember, newMember) => {
                            });
                        });
                    }
-               } else if (newMember.member.roles.cache.find( r=> r.name === process.env.SAM_ROLE)) {
-                   console.log(newMember.member.user.username + ' is in the role "' + process.env.SAM_ROLE + '". Joining their channel!');
+               }
+               else{    //SWITCHED TO OTHER CHANNEL THAN AFK
+                   if (newMember.member.roles.cache.find(r => r.name === process.env.HELLO_ROLE)) { //HELLO
+                       console.log(newMember.member.user.username + ' is in the role "' + process.env.HELLO_ROLE + '". Joining their channel!');
 
-                   newUserChannel.join().then(connection => {
-                       const soundFile = require("path").join(__dirname, process.env.SAM_SOUNDFILE);
-                       const dispatcher = connection.play(soundFile, {volume: 2.0});
+                       newUserChannel.join().then(connection => {
+                           const soundFile = require("path").join(__dirname, process.env.HELLO_SOUNDFILE);
+                           const dispatcher = connection.play(soundFile, {volume: 2.0});
 
-                       dispatcher.on('finish', () => {
-                           newUserChannel.leave();
+                           dispatcher.on('finish', () => {
+                               newUserChannel.leave();
+                           });
                        });
-                   });
+                   } else if (newMember.member.roles.cache.find(r => r.name === process.env.TRON_ROLE)) {   //TRON
+                       console.log(newMember.member.user.username + ' is in the role "' + process.env.TRON_ROLE + '". Joining their channel!');
+
+                       newUserChannel.join().then(connection => {
+                           const soundFile = require("path").join(__dirname, process.env.TRON_SOUNDFILE);
+                           const dispatcher = connection.play(soundFile, {volume: 2.0});
+
+                           dispatcher.on('finish', () => {
+                               newUserChannel.leave();
+                           });
+                       });
+                   } else if (newMember.member.roles.cache.find( r=> r.name === process.env.SAM_ROLE)) {    //SAM
+                       console.log(newMember.member.user.username + ' is in the role "' + process.env.SAM_ROLE + '". Joining their channel!');
+
+                       newUserChannel.join().then(connection => {
+                           const soundFile = require("path").join(__dirname, process.env.SAM_SOUNDFILE);
+                           const dispatcher = connection.play(soundFile, {volume: 2.0});
+
+                           dispatcher.on('finish', () => {
+                               newUserChannel.leave();
+                           });
+                       });
+                   }  else if (newMember.member.roles.cache.find( r=> r.name === process.env.SAM_ROLE)) {    //SAM
+                       console.log(newMember.member.user.username + ' is in the role "' + process.env.SAM_ROLE + '". Joining their channel!');
+
+                       newUserChannel.join().then(connection => {
+                           const soundFile = require("path").join(__dirname, process.env.SAM_SOUNDFILE);
+                           const dispatcher = connection.play(soundFile, {volume: 2.0});
+
+                           dispatcher.on('finish', () => {
+                               newUserChannel.leave();
+                           });
+                       });
+                   } else if (newMember.member.roles.cache.find( r=> r.name === process.env.MOMMY_ROLE)) {    //MOMMY
+                       console.log(newMember.member.user.username + ' is in the role "' + process.env.MOMMY_ROLE + '". Joining their channel!');
+
+                       newUserChannel.join().then(connection => {
+                           const soundFile = require("path").join(__dirname, process.env.MOMMY_SOUNDFILE);
+                           const dispatcher = connection.play(soundFile, {volume: 2.0});
+
+                           dispatcher.on('finish', () => {
+                               newUserChannel.leave();
+                           });
+                       });
+                   }
                }
            }
        }
-
    }
 });
 
-//When someone joins the server
+//NEW PERSON ON SERVER
 bot.on('guildMemberAdd', (member) => {
     let sysChan = member.guild.systemChannel;
     sysChan.startTyping();
@@ -93,5 +117,4 @@ bot.on('guildMemberAdd', (member) => {
         .catch(console.error);
 
     sysChan.stopTyping();
-
 });
