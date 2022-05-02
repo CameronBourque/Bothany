@@ -17,6 +17,8 @@ function playSound (userChannel, sound) {
         dispatcher.on('finish', () => {
             userChannel.leave();
         });
+    }).catch(function(error) {
+        console.log('Unable to join the channel (no permission?)');
     });
 }
 
