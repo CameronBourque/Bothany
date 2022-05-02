@@ -31,18 +31,18 @@ bot.on('voiceStateUpdate', (oldMember, newMember) => {
 
            if (!newMember.member.user.bot) {    //NOT A BOT
                if(newUserChannel === newUserChannel.guild.afkChannel){  //SWITCH TO AFK CHANNEL
-                   if (newMember.member.roles.cache.find( r=> r.name === process.env.AFK_ROLE)) {   //AFK
-                       console.log(newMember.member.user.username + ' is in the role "' + process.env.AFK_ROLE + '". Joining their old channel!');
-
-                       oldUserChannel.join().then(connection => {
-                           const soundFile = require("path").join(__dirname, process.env.AFK_SOUNDFILE);
-                           const dispatcher = connection.play(soundFile, {volume: 2.0});
-
-                           dispatcher.on('finish', () => {
-                               oldUserChannel.leave();
-                           });
-                       });
-                   }
+                   // if (newMember.member.roles.cache.find( r=> r.name === process.env.AFK_ROLE)) {   //AFK
+                   //     console.log(newMember.member.user.username + ' is in the role "' + process.env.AFK_ROLE + '". Joining their old channel!');
+                   //
+                   //     oldUserChannel.join().then(connection => {
+                   //         const soundFile = require("path").join(__dirname, process.env.AFK_SOUNDFILE);
+                   //         const dispatcher = connection.play(soundFile, {volume: 2.0});
+                   //
+                   //         dispatcher.on('finish', () => {
+                   //             oldUserChannel.leave();
+                   //         });
+                   //     });
+                   // }
                }
                else{    //SWITCHED TO OTHER CHANNEL THAN AFK
                    if (newMember.member.roles.cache.find( r=> r.name === process.env.MOMMY_ROLE)) {    //MOMMY
@@ -100,6 +100,17 @@ bot.on('voiceStateUpdate', (oldMember, newMember) => {
                    //             newUserChannel.leave();
                    //         });
                    //     });
+                   } else if (newMember.member.roles.cache.find( r=> r.name === process.env.POGCHAMP_ROLE)) {    //MOMMY
+                       console.log(newMember.member.user.username + ' is in the role "' + process.env.POGCHAMP_ROLE + '". Joining their channel!');
+
+                       newUserChannel.join().then(connection => {
+                           const soundFile = require("path").join(__dirname, process.env.POGCHAMP_SOUNDFILE);
+                           const dispatcher = connection.play(soundFile, {volume: 2.0});
+
+                           dispatcher.on('finish', () => {
+                               newUserChannel.leave();
+                           });
+                       });
                    }
                }
            }
