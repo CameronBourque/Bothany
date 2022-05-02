@@ -45,51 +45,7 @@ bot.on('voiceStateUpdate', (oldMember, newMember) => {
                    }
                }
                else{    //SWITCHED TO OTHER CHANNEL THAN AFK
-                   if (newMember.member.roles.cache.find(r => r.name === process.env.HELLO_ROLE)) { //HELLO
-                       console.log(newMember.member.user.username + ' is in the role "' + process.env.HELLO_ROLE + '". Joining their channel!');
-
-                       newUserChannel.join().then(connection => {
-                           const soundFile = require("path").join(__dirname, process.env.HELLO_SOUNDFILE);
-                           const dispatcher = connection.play(soundFile, {volume: 2.0});
-
-                           dispatcher.on('finish', () => {
-                               newUserChannel.leave();
-                           });
-                       });
-                   } else if (newMember.member.roles.cache.find(r => r.name === process.env.TRON_ROLE)) {   //TRON
-                       console.log(newMember.member.user.username + ' is in the role "' + process.env.TRON_ROLE + '". Joining their channel!');
-
-                       newUserChannel.join().then(connection => {
-                           const soundFile = require("path").join(__dirname, process.env.TRON_SOUNDFILE);
-                           const dispatcher = connection.play(soundFile, {volume: 2.0});
-
-                           dispatcher.on('finish', () => {
-                               newUserChannel.leave();
-                           });
-                       });
-                   } else if (newMember.member.roles.cache.find( r=> r.name === process.env.SAM_ROLE)) {    //SAM
-                       console.log(newMember.member.user.username + ' is in the role "' + process.env.SAM_ROLE + '". Joining their channel!');
-
-                       newUserChannel.join().then(connection => {
-                           const soundFile = require("path").join(__dirname, process.env.SAM_SOUNDFILE);
-                           const dispatcher = connection.play(soundFile, {volume: 2.0});
-
-                           dispatcher.on('finish', () => {
-                               newUserChannel.leave();
-                           });
-                       });
-                   }  else if (newMember.member.roles.cache.find( r=> r.name === process.env.SAM_ROLE)) {    //SAM
-                       console.log(newMember.member.user.username + ' is in the role "' + process.env.SAM_ROLE + '". Joining their channel!');
-
-                       newUserChannel.join().then(connection => {
-                           const soundFile = require("path").join(__dirname, process.env.SAM_SOUNDFILE);
-                           const dispatcher = connection.play(soundFile, {volume: 2.0});
-
-                           dispatcher.on('finish', () => {
-                               newUserChannel.leave();
-                           });
-                       });
-                   } else if (newMember.member.roles.cache.find( r=> r.name === process.env.MOMMY_ROLE)) {    //MOMMY
+                   if (newMember.member.roles.cache.find( r=> r.name === process.env.MOMMY_ROLE)) {    //MOMMY
                        console.log(newMember.member.user.username + ' is in the role "' + process.env.MOMMY_ROLE + '". Joining their channel!');
 
                        newUserChannel.join().then(connection => {
@@ -100,6 +56,50 @@ bot.on('voiceStateUpdate', (oldMember, newMember) => {
                                newUserChannel.leave();
                            });
                        });
+                   // } else if (newMember.member.roles.cache.find(r => r.name === process.env.HELLO_ROLE)) { //HELLO
+                   //     console.log(newMember.member.user.username + ' is in the role "' + process.env.HELLO_ROLE + '". Joining their channel!');
+                   //
+                   //     newUserChannel.join().then(connection => {
+                   //         const soundFile = require("path").join(__dirname, process.env.HELLO_SOUNDFILE);
+                   //         const dispatcher = connection.play(soundFile, {volume: 2.0});
+                   //
+                   //         dispatcher.on('finish', () => {
+                   //             newUserChannel.leave();
+                   //         });
+                   //     });
+                   // } else if (newMember.member.roles.cache.find(r => r.name === process.env.TRON_ROLE)) {   //TRON
+                   //     console.log(newMember.member.user.username + ' is in the role "' + process.env.TRON_ROLE + '". Joining their channel!');
+                   //
+                   //     newUserChannel.join().then(connection => {
+                   //         const soundFile = require("path").join(__dirname, process.env.TRON_SOUNDFILE);
+                   //         const dispatcher = connection.play(soundFile, {volume: 2.0});
+                   //
+                   //         dispatcher.on('finish', () => {
+                   //             newUserChannel.leave();
+                   //         });
+                   //     });
+                   // } else if (newMember.member.roles.cache.find( r=> r.name === process.env.SAM_ROLE)) {    //SAM
+                   //     console.log(newMember.member.user.username + ' is in the role "' + process.env.SAM_ROLE + '". Joining their channel!');
+                   //
+                   //     newUserChannel.join().then(connection => {
+                   //         const soundFile = require("path").join(__dirname, process.env.SAM_SOUNDFILE);
+                   //         const dispatcher = connection.play(soundFile, {volume: 2.0});
+                   //
+                   //         dispatcher.on('finish', () => {
+                   //             newUserChannel.leave();
+                   //         });
+                   //     });
+                   // }  else if (newMember.member.roles.cache.find( r=> r.name === process.env.SAM_ROLE)) {    //SAM
+                   //     console.log(newMember.member.user.username + ' is in the role "' + process.env.SAM_ROLE + '". Joining their channel!');
+                   //
+                   //     newUserChannel.join().then(connection => {
+                   //         const soundFile = require("path").join(__dirname, process.env.SAM_SOUNDFILE);
+                   //         const dispatcher = connection.play(soundFile, {volume: 2.0});
+                   //
+                   //         dispatcher.on('finish', () => {
+                   //             newUserChannel.leave();
+                   //         });
+                   //     });
                    }
                }
            }
