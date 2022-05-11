@@ -67,13 +67,17 @@ bot.on('voiceStateUpdate', (oldMember, newMember) => {
                    logRoleIdentified(newMember, process.env.POGCHAMP_ROLE);
                    playSound(newUserChannel, process.env.POGCHAMP_SOUNDFILE);
 
-               } else if (newMember.member.roles.cache.find( r=> r.name === process.env.RAT_KING_ROLE)) {    //POGCHAMP
+               } else if (newMember.member.roles.cache.find( r=> r.name === process.env.RAT_KING_ROLE)) {    //RAT KING
                    logRoleIdentified(newMember, process.env.RAT_KING_ROLE);
                    playSound(newUserChannel, process.env.RAT_KING_SOUNDFILE);
 
-               } else if (newMember.member.roles.cache.find( r=> r.name === process.env.NIGHT_NIGHT_ROLE)) {    //POGCHAMP
+               } else if (newMember.member.roles.cache.find( r=> r.name === process.env.NIGHT_NIGHT_ROLE)) {    //NIGHT NIGHT
                    logRoleIdentified(newMember, process.env.NIGHT_NIGHT_ROLE);
                    playSound(newUserChannel, process.env.NIGHT_NIGHT_SOUNDFILE);
+
+               } else if (newMember.member.roles.cache.find( r=> r.name === process.env.COWBOY_ROLE)) {    //COWBOY
+                   logRoleIdentified(newMember, process.env.COWBOY_ROLE);
+                   playSound(newUserChannel, process.env.COWBOY_SOUNDFILE);
 
                }
            }
