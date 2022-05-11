@@ -67,6 +67,10 @@ bot.on('voiceStateUpdate', (oldMember, newMember) => {
                    logRoleIdentified(newMember, process.env.POGCHAMP_ROLE);
                    playSound(newUserChannel, process.env.POGCHAMP_SOUNDFILE);
 
+               } else if (newMember.member.roles.cache.find( r=> r.name === process.env.RAT_KING_ROLE)) {    //POGCHAMP
+                   logRoleIdentified(newMember, process.env.RAT_KING_ROLE);
+                   playSound(newUserChannel, process.env.RAT_KING_SOUNDFILE);
+
                }
            }
        }
