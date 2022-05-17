@@ -2,6 +2,7 @@
 import {} from 'dotenv/config'
 import {playSound} from "./audio";
 import {logRoleIdentified} from "./logger";
+import firebaseApp from "./firebase";
 
 const Discord = require('discord.js');
 const bot = new Discord.Client();
