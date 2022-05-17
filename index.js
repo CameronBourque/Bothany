@@ -1,26 +1,12 @@
 //Setup and log into the index account
-require('dotenv').config();
+import {} from 'dotenv/config'
+import {playSound} from "./audio";
+import {logRoleIdentified} from "./logger";
+
 const Discord = require('discord.js');
 const bot = new Discord.Client();
 
 bot.login(process.env.TOKEN);
-
-function logRoleIdentified(member, role) {
-    console.log(member.member.user.username + ' has in the role "' + role + '". Joining their channel!');
-}
-
-function playSound (userChannel, sound) {
-    userChannel.join().then(connection => {
-        const soundFile = require("path").join(__dirname, sound);
-        const dispatcher = connection.play(soundFile, {volume: 2.0});
-
-        dispatcher.on('finish', () => {
-            userChannel.leave();
-        });
-    }).catch(function(error) {
-        console.log('Unable to join the channel (no permission?)');
-    });
-}
 
 //On any voice channel update
 bot.on('voiceStateUpdate', (oldMember, newMember) => {
@@ -87,6 +73,8 @@ bot.on('voiceStateUpdate', (oldMember, newMember) => {
 
 //NEW PERSON ON SERVER
 bot.on('guildMemberAdd', (member) => {
+    // TODO: Make this toggleable with a saved welcome message in the database
+
     let sysChan = member.guild.systemChannel;
     sysChan.startTyping();
 
