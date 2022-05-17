@@ -1,11 +1,28 @@
-//Setup and log into the index account
 import {} from 'dotenv/config'
 import {playSound} from "./audio";
-import {logRoleIdentified} from "./logger";
+import {logDebug, logError, logRoleIdentified} from "./logger";
 import firebaseApp from "./firebase";
+import Discord from "discord.js";
+import {deployCommands} from "./deploy-commands";
+import {cmdHandler} from "./commandHandler";
 
-const Discord = require('discord.js');
-const bot = new Discord.Client();
+// Setup intents and create bot
+const botIntents = new Discord.Intents();
+botIntents.add(Discord.Intents.FLAGS.GUILD_MESSAGES,
+    Discord.Intents.FLAGS.GUILD_MEMBERS,
+    Discord.Intents.FLAGS.GUILD_VOICE_STATES,
+    Discord.Intents.FLAGS.GUILD_MESSAGE_TYPING,
+    Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+)
+
+const bot = new Discord.Client({ intents: botIntents });
+
+// Once bot is running we need some additional setup (e.g. deploy the commands!)
+bot.once('ready', () => {
+    logDebug("Bothony is active!");
+
+    deployCommands(bot.user.id);
+});
 
 bot.login(process.env.TOKEN);
 
@@ -24,7 +41,7 @@ bot.on('voiceStateUpdate', (oldMember, newMember) => {
        }
        else {   //CHANGING/JOINING CHANNELS
            let chanName = newUserChannel.name;
-           console.log(newMember.member.user.username + ' joined ' + chanName + '!');
+           logDebug(newMember.member.user.username + ' joined ' + chanName + '!');
 
            if(newUserChannel === newUserChannel.guild.afkChannel){  //SWITCH TO AFK CHANNEL
                // if (newMember.member.roles.cache.find( r=> r.name === process.env.AFK_ROLE)) {   //AFK
@@ -72,6 +89,16 @@ bot.on('voiceStateUpdate', (oldMember, newMember) => {
    }
 });
 
+bot.on('interactionCreate', interaction => {
+    // If it's a command we want to process it
+    if(interaction.isCommand()) {
+       cmdHandler(interaction);
+    }
+
+    // TODO: Add other interactions
+    // TODO: Want a similarity comparison on sound files to
+})
+
 //NEW PERSON ON SERVER
 bot.on('guildMemberAdd', (member) => {
     // TODO: Make this toggleable with a saved welcome message in the database
@@ -80,8 +107,8 @@ bot.on('guildMemberAdd', (member) => {
     sysChan.startTyping();
 
     sysChan.send('What the fuck is up ' + member.user.username + '!')
-        .then(message => console.log('Introduced new member, ' + member.user.username + ' to ' + member.guild.name))
-        .catch(console.error);
+        .then(message => logDebug('Introduced new member, ' + member.user.username + ' to ' + member.guild.name))
+        .catch(logError);
 
     sysChan.stopTyping();
 });
