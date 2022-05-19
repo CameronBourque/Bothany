@@ -1,6 +1,6 @@
-import firebaseApp from "./firebase";
-import {collection, getDocs, getDoc, getFirestore, query, where, setDoc, doc} from "firebase/firestore";
-import {logDebug, logError} from "./logger";
+import firebaseApp from "../firebase";
+import {collection, getDocs, getDoc, getFirestore, query, where, setDoc, doc, deleteDoc} from "firebase/firestore";
+import {logDebug, logError} from "../logger";
 
 const db = getFirestore(firebaseApp);
 
@@ -14,7 +14,7 @@ export async function guildExists(gID) {
 // Create the guild in the database
 export async function createGuild(gID, gName = '', limit=5) {
     try {
-        await setDoc(doc(collection(db, "guilds"), gID), {
+        await setDoc(doc(db, "guilds", gID), {
             gName: gName,
             sound_list: [],
             welcome_msg: "",
@@ -23,6 +23,18 @@ export async function createGuild(gID, gName = '', limit=5) {
         logDebug("Created document for guild " + gID + " with a sound limit of " + limit)
         return true
     } catch(err) {
+        logError(err)
+    }
+    return false
+}
+
+export async function removeGuild(gID) {
+    try {
+        // TODO: Find all sounds associated and delete them
+
+        await deleteDoc(doc(db, "guilds", gID))
+        return true
+    } catch (err) {
         logError(err)
     }
     return false

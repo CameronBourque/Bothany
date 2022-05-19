@@ -6,7 +6,7 @@ import {logDebug, logError} from "./logger";
 import Discord from "discord.js";
 import {deployCommands} from "./deploy-commands";
 import {notifyCompletion} from "./commandHandler";
-import {checkSound, createGuild, getSound, getWelcomeMsg, guildExists} from "./database";
+import {createGuild, getSound, getWelcomeMsg, guildExists, removeGuild} from "./data/database";
 
 // Setup intents and create bot
 const botIntents = new Discord.Intents();
@@ -57,7 +57,7 @@ bot.on('voiceStateUpdate', async (oldMember, newMember) => {
             } else {    // Switched to another channel
                 let sound = getSound(newUserChannel.guild.id, newMember.member.roles)
                 if (sound) {
-                        await playSound(sound)
+                    await playSound(sound)
                 }
             }
         }
@@ -101,3 +101,10 @@ bot.on('guildMemberAdd', async (member) => {
         sysChan.stopTyping();
     }
 });
+
+// Handle removal of / from guild
+bot.on('guildDelete', async (guild) => {
+    if(await guildExists(guild.id)) {
+        await removeGuild(guild.id)
+    }
+})

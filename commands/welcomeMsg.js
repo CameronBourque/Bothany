@@ -1,5 +1,5 @@
 import {notifyCompletion, notifyProcessing} from "../commandHandler";
-import {removeWelcomeMsg, setWelcomeMsg} from "../database";
+import {removeWelcomeMsg, setWelcomeMsg} from "../data/database";
 const { SlashCommandBuilder } = import('@discordjs/builders');
 
 module.exports = {
