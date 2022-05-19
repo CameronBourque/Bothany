@@ -29,6 +29,18 @@ export async function createGuild(gID, gName, limit=5) {
     return false
 }
 
+export async function reachedLimit(gID) {
+    // TODO: Check database
+
+    return false
+}
+
+export async function getSound(gID, role) {
+    // TODO: Get from database
+
+    return null
+}
+
 export async function checkSound(gID, role) {
     // TODO: Check database
 
@@ -49,6 +61,24 @@ export async function updateSound(gID, role, sound) {
 
 export async function removeSound(gID, role) {
     // TODO: Delete from database
+
+    return false
+}
+
+export async function getWelcomeMsg(gID) {
+    // TODO: Get from database
+
+    return ''
+}
+
+export async function setWelcomeMsg(gID) {
+    // TODO: Update database
+
+    return false
+}
+
+export async function removeWelcomeMsg(gID) {
+    // TODO: Remove from database
 
     return false
 }

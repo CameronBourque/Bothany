@@ -6,6 +6,7 @@ import {logDebug, logError, logRoleIdentified} from "./logger";
 import Discord from "discord.js";
 import {deployCommands} from "./deploy-commands";
 import {cmdHandler, notifyCompletion} from "./commandHandler";
+import {createGuild, getWelcomeMsg, guildExists} from "./database";
 
 // Setup intents and create bot
 const botIntents = new Discord.Intents();
@@ -44,71 +45,35 @@ bot.on('voiceStateUpdate', (oldMember, newMember) => {
    let newUserChannel = newMember.channel;
    let oldUserChannel = oldMember.channel;
 
-   if(newUserChannel !== null && !newMember.member.user.bot){ //VALID CHANNEL SWAP AND NOT BOT
-       if(newUserChannel === oldUserChannel){ //MUTE AND UNMUTE
-            // if(newMember.member.roles.cache.find(r => r.name === process.env.SAD_ROLE) && newMember.selfDeaf){  //SAD
-            //     logRoleIdentified(newMember, process.env.SAD_ROLE);
-            //     playSound(newUserChannel, process.env.SAD_SOUNDFILE);
-            //
-            // }
+   if(newUserChannel !== null && !newMember.member.user.bot){ // Check user is still in a VC and not a bot
+       if(newUserChannel === oldUserChannel){ // Mute / Unmute / Deafen / Undeafen
+            // Do nothing
        }
-       else {   //CHANGING/JOINING CHANNELS
+       else {   // VC change
            let chanName = newUserChannel.name;
            logDebug(newMember.member.user.username + ' joined ' + chanName + '!');
 
-           if(newUserChannel === newUserChannel.guild.afkChannel){  //SWITCH TO AFK CHANNEL
-               // if (newMember.member.roles.cache.find( r=> r.name === process.env.AFK_ROLE)) {   //AFK
-               //     logRoleIdentified(newMember, process.env.AFK_ROLE);
-               //     playSound(oldUserChannel, process.env.AFK_SOUNDFILE);
-               //
-               // }
+           if(newUserChannel === newUserChannel.guild.afkChannel){  // Joined an AFK Channel
+               // Do nothing
            }
-           else{    //SWITCHED TO A CHANNEL OTHER THAN AFK
-               if (newMember.member.roles.cache.find( r=> r.name === process.env.MOMMY_ROLE)) {    //MOMMY
-                   logRoleIdentified(newMember, process.env.MOMMY_ROLE);
-                   playSound(newUserChannel, process.env.MOMMY_SOUNDFILE);
-
-               // } else if (newMember.member.roles.cache.find(r => r.name === process.env.HELLO_ROLE)) { //HELLO
-               //     logRoleIdentified(newMember, process.env.HELLO_ROLE);
-               //     playSound(newUserChannel, process.env.HELLO_ROLE);
-               //
-               // } else if (newMember.member.roles.cache.find(r => r.name === process.env.TRON_ROLE)) {   //TRON
-               //     logRoleIdentified(newMember, process.env.TRON_ROLE);
-               //     playSound(newUserChannel, process.env.TRON_SOUNDFILE);
-               //
-               // } else if (newMember.member.roles.cache.find( r=> r.name === process.env.SAM_ROLE)) {    //SAM
-               //     logRoleIdentified(newMember, process.env.SAM_ROLE);
-               //     playSound(newUserChannel, process.env.SAM_SOUNDFILE);
-               //
-               } else if (newMember.member.roles.cache.find( r=> r.name === process.env.POGCHAMP_ROLE)) {    //POGCHAMP
-                   logRoleIdentified(newMember, process.env.POGCHAMP_ROLE);
-                   playSound(newUserChannel, process.env.POGCHAMP_SOUNDFILE);
-
-               } else if (newMember.member.roles.cache.find( r=> r.name === process.env.RAT_KING_ROLE)) {    //RAT KING
-                   logRoleIdentified(newMember, process.env.RAT_KING_ROLE);
-                   playSound(newUserChannel, process.env.RAT_KING_SOUNDFILE);
-
-               } else if (newMember.member.roles.cache.find( r=> r.name === process.env.NIGHT_NIGHT_ROLE)) {    //NIGHT NIGHT
-                   logRoleIdentified(newMember, process.env.NIGHT_NIGHT_ROLE);
-                   playSound(newUserChannel, process.env.NIGHT_NIGHT_SOUNDFILE);
-
-               } else if (newMember.member.roles.cache.find( r=> r.name === process.env.COWBOY_ROLE)) {    //COWBOY
-                   logRoleIdentified(newMember, process.env.COWBOY_ROLE);
-                   playSound(newUserChannel, process.env.COWBOY_SOUNDFILE);
-
-               }
+           else{    // Switched to another channel
+               // TODO: Check role and play sound
            }
        }
    }
 });
 
 // When there is an interaction, handle it
-bot.on('interactionCreate', async interaction => {
+bot.on('interactionCreate', async (interaction) => {
     // If it's a command we want to process it
     if (interaction.isCommand()) {
         const cmd = bot.commands.get(interaction.commandName)
         if (cmd) {
             try {
+                if(! await guildExists(interaction.guildId)) {
+                    await createGuild(interaction.guildId, interaction.guild.name)
+                }
+
                 await cmd.execute(interaction)
             } catch(err) {
                 logError(err)
@@ -118,19 +83,20 @@ bot.on('interactionCreate', async interaction => {
     }
 
     // TODO: Add other interactions
-    // TODO: Want a similarity comparison on sound files too
+    // TODO: E.G. Want a similarity comparison on sound files too
 })
 
 // Handle when a new person joins the server
-bot.on('guildMemberAdd', (member) => {
-    // TODO: Make this toggleable with a saved welcome message in the database
+bot.on('guildMemberAdd', async (member) => {
+    let msg = await getWelcomeMsg(member.guild.id)
+    if (msg) {
+        let sysChan = member.guild.systemChannel;
+        sysChan.startTyping();
 
-    let sysChan = member.guild.systemChannel;
-    sysChan.startTyping();
+        sysChan.send(msg)
+            .then(message => logDebug('Introduced new member, ' + member.user.username + ' to ' + member.guild.name))
+            .catch(logError);
 
-    sysChan.send('What the fuck is up ' + member.user.username + '!')
-        .then(message => logDebug('Introduced new member, ' + member.user.username + ' to ' + member.guild.name))
-        .catch(logError);
-
-    sysChan.stopTyping();
+        sysChan.stopTyping();
+    }
 });
