@@ -1,5 +1,5 @@
 import {notifyCompletion, notifyProcessing} from "../commandHandler";
-import {addSound} from "../database";
+import {checkSound, removeSound} from "../database";
 const { SlashCommandBuilder } = import('@discordjs/builders');
 
 module.exports = {
@@ -17,7 +17,10 @@ module.exports = {
         const role = cmd.options.getRole('role')
         const sound = cmd.options.getAttachment('soundfile')
 
-        let success = await removeSound(gID, role)
+        let success = true
+        if(await checkSound(gID, role)) {
+            success = await removeSound(gID, role)
+        }
         let msg = 'removed sound from ' + role.toString()
 
         await notifyCompletion(cmd, msg, success)

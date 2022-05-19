@@ -5,7 +5,7 @@ export async function notifyProcessing(cmd) {
 
 // Tell the user the outcome of their command
 export async function notifyCompletion(cmd, msg, success, ephemeral = false) {
-    let outcome = 'Failed to '
+    let outcome = 'Unsuccessfully '
     if(success) {
         outcome = 'Successfully '
     }
