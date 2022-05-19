@@ -15,7 +15,6 @@ module.exports = {
 
         const gID = cmd.guildId
         const role = cmd.options.getRole('role')
-        const sound = cmd.options.getAttachment('soundfile')
 
         let success = true
         if(await checkSound(gID, role)) {
