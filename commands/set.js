@@ -1,14 +1,14 @@
 import {notifyCompletion, notifyProcessing} from "../commandHandler";
-import {addSound} from "../database";
+import {setSound} from "../database";
 const { SlashCommandBuilder } = import('@discordjs/builders');
 
 module.exports = {
     data: new SlashCommandBuilder()
-        .setName('add')
-        .setDescription('Adds a sound to play when a user with a specified role joins a voice channel.')
+        .setName('set')
+        .setDescription('Sets what sound will play when a user with a specified role joins a voice channel. ')
         .addRoleOption(option =>
             option.setName('role')
-                .setDescription('The role to assign the sound to.')
+                .setDescription('The role to set the sound for.')
                 .setRequired(true))
         .addAttachmentOption(option =>
             option.setName('soundfile')
@@ -21,8 +21,8 @@ module.exports = {
         const role = cmd.options.getRole('role')
         const sound = cmd.options.getAttachment('soundfile')
 
-        let success = await addSound(gID, role, sound)
-        let msg = 'added sound to ' + role.toString()
+        let success = await setSound(gID, role, sound)
+        let msg = 'set sound for ' + role.toString()
 
         await notifyCompletion(cmd, msg, success)
     }

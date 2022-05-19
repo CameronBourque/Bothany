@@ -1,5 +1,5 @@
 import firebaseApp from "./firebase";
-import {collection, getDocs, getFirestore, query, where, addDoc} from "firebase/firestore";
+import {collection, getDocs, getDoc, getFirestore, query, where, setDoc, doc} from "firebase/firestore";
 import {logDebug, logError} from "./logger";
 
 const db = getFirestore(firebaseApp);
@@ -12,10 +12,9 @@ export async function guildExists(gID) {
 }
 
 // Create the guild in the database
-export async function createGuild(gID, gName, limit=5) {
+export async function createGuild(gID, gName = '', limit=5) {
     try {
-        const decRef = await addDoc(collection(db, "guilds"), {
-            gID: gID,
+        await setDoc(doc(collection(db, "guilds"), gID), {
             gName: gName,
             sound_list: [],
             welcome_msg: "",
@@ -29,34 +28,51 @@ export async function createGuild(gID, gName, limit=5) {
     return false
 }
 
-export async function reachedLimit(gID) {
+async function reachedLimit(gID) {
     // TODO: Check database
+    const snap = await getDoc(doc(db, 'guilds', gID))
+    if(!snap.exists()) {
+        logError('Document doesn\'t exist for ' + gID)
+        return true
+    }
 
-    return false
+    logDebug(snap.data().toString())
+    // TODO: Replace with comparison on sound array with sound limit
+    return true
 }
 
-export async function getSound(gID, role) {
+export async function getSound(gID, roles) {
     // TODO: Get from database
 
     return null
 }
 
-export async function checkSound(gID, role) {
+async function checkSound(gID, role) {
     // TODO: Check database
 
     return false
 }
 
-export async function addSound(gID, role, sound) {
-    // TODO: Add to database
+async function addSound(gID, role, sound) {
+    if(!await reachedLimit(gID)) {
+        // TODO: Add to database
+
+    }
+    return false
+}
+
+async function updateSound(gID, role, sound) {
+    // TODO: Update in database
 
     return false
 }
 
-export async function updateSound(gID, role, sound) {
-    // TODO: Update in database
-
-    return false
+export async function setSound(gID, role, sound) {
+    if(await checkSound(gID, role)) {
+        return await updateSound(gID, role, sound)
+    } else {
+        return await addSound(gID, role, sound)
+    }
 }
 
 export async function removeSound(gID, role) {

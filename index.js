@@ -2,11 +2,11 @@ import {} from 'dotenv/config';
 import fs from 'node:fs';
 import path from 'node:path';
 import {playSound} from "./audio";
-import {logDebug, logError, logRoleIdentified} from "./logger";
+import {logDebug, logError} from "./logger";
 import Discord from "discord.js";
 import {deployCommands} from "./deploy-commands";
-import {cmdHandler, notifyCompletion} from "./commandHandler";
-import {createGuild, getWelcomeMsg, guildExists} from "./database";
+import {notifyCompletion} from "./commandHandler";
+import {checkSound, createGuild, getSound, getWelcomeMsg, guildExists} from "./database";
 
 // Setup intents and create bot
 const botIntents = new Discord.Intents();
@@ -41,26 +41,27 @@ bot.once('ready', () => {
 bot.login(process.env.TOKEN);
 
 //On any voice channel update
-bot.on('voiceStateUpdate', (oldMember, newMember) => {
-   let newUserChannel = newMember.channel;
-   let oldUserChannel = oldMember.channel;
+bot.on('voiceStateUpdate', async (oldMember, newMember) => {
+    let newUserChannel = newMember.channel;
+    let oldUserChannel = oldMember.channel;
 
-   if(newUserChannel !== null && !newMember.member.user.bot){ // Check user is still in a VC and not a bot
-       if(newUserChannel === oldUserChannel){ // Mute / Unmute / Deafen / Undeafen
+    if (newUserChannel !== null && !newMember.member.user.bot) { // Check user is still in a VC and not a bot
+        if (newUserChannel === oldUserChannel) { // Mute / Unmute / Deafen / Undeafen
             // Do nothing
-       }
-       else {   // VC change
-           let chanName = newUserChannel.name;
-           logDebug(newMember.member.user.username + ' joined ' + chanName + '!');
+        } else {   // VC change
+            let chanName = newUserChannel.name;
+            logDebug(newMember.member.user.username + ' joined ' + chanName + '!');
 
-           if(newUserChannel === newUserChannel.guild.afkChannel){  // Joined an AFK Channel
-               // Do nothing
-           }
-           else{    // Switched to another channel
-               // TODO: Check role and play sound
-           }
-       }
-   }
+            if (newUserChannel === newUserChannel.guild.afkChannel) {  // Joined an AFK Channel
+                // Do nothing
+            } else {    // Switched to another channel
+                let sound = getSound(newUserChannel.guild.id, newMember.member.roles)
+                if (sound) {
+                        await playSound(sound)
+                }
+            }
+        }
+    }
 });
 
 // When there is an interaction, handle it
@@ -82,7 +83,7 @@ bot.on('interactionCreate', async (interaction) => {
         }
     }
 
-    // TODO: Add other interactions
+    // TODO: Add other interactions in the future
     // TODO: E.G. Want a similarity comparison on sound files too
 })
 
