@@ -1,10 +1,11 @@
-import {} from 'dotenv/config'
+import {} from 'dotenv/config';
+import fs from 'node:fs';
+import path from 'node:path';
 import {playSound} from "./audio";
 import {logDebug, logError, logRoleIdentified} from "./logger";
-import firebaseApp from "./firebase";
 import Discord from "discord.js";
 import {deployCommands} from "./deploy-commands";
-import {cmdHandler} from "./commandHandler";
+import {cmdHandler, notifyCompletion} from "./commandHandler";
 
 // Setup intents and create bot
 const botIntents = new Discord.Intents();
@@ -14,8 +15,19 @@ botIntents.add(Discord.Intents.FLAGS.GUILD_MESSAGES,
     Discord.Intents.FLAGS.GUILD_MESSAGE_TYPING,
     Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
 )
-
 const bot = new Discord.Client({ intents: botIntents });
+
+// Attach commands
+bot.commands = new Discord.Collection();
+const cmdPath = path.join(__dirname, 'commands')
+const cmdFiles = fs.readdirSync(cmdPath).filter(file => file.endsWith('.js'))
+
+for(const file of cmdFiles) {
+    const filePath = path.join(cmdPath, file)
+    const cmd = import(filePath)
+
+    bot.commands.set(cmd.data.name, cmd)
+}
 
 // Once bot is running we need some additional setup (e.g. deploy the commands!)
 bot.once('ready', () => {
@@ -24,6 +36,7 @@ bot.once('ready', () => {
     deployCommands(bot.user.id);
 });
 
+// Login the bot
 bot.login(process.env.TOKEN);
 
 //On any voice channel update
@@ -89,17 +102,26 @@ bot.on('voiceStateUpdate', (oldMember, newMember) => {
    }
 });
 
-bot.on('interactionCreate', interaction => {
+// When there is an interaction, handle it
+bot.on('interactionCreate', async interaction => {
     // If it's a command we want to process it
-    if(interaction.isCommand()) {
-       cmdHandler(interaction);
+    if (interaction.isCommand()) {
+        const cmd = bot.commands.get(interaction.commandName)
+        if (cmd) {
+            try {
+                await cmd.execute(interaction)
+            } catch(err) {
+                logError(err)
+                await notifyCompletion(interaction, 'process the command.', false, true)
+            }
+        }
     }
 
     // TODO: Add other interactions
-    // TODO: Want a similarity comparison on sound files to
+    // TODO: Want a similarity comparison on sound files too
 })
 
-//NEW PERSON ON SERVER
+// Handle when a new person joins the server
 bot.on('guildMemberAdd', (member) => {
     // TODO: Make this toggleable with a saved welcome message in the database
 
