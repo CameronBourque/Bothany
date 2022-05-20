@@ -71,7 +71,7 @@ bot.on('interactionCreate', async (interaction) => {
         const cmd = bot.commands.get(interaction.commandName)
         if (cmd) {
             try {
-                if(! await guildExists(interaction.guildId)) {
+                if(!await guildExists(interaction.guildId)) {
                     await createGuild(interaction.guildId, interaction.guild.name)
                 }
 

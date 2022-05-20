@@ -1,6 +1,8 @@
 import firebaseApp from "../firebase";
-import {collection, getDocs, getDoc, getFirestore, query, where, setDoc, doc, deleteDoc} from "firebase/firestore";
+import {collection, getDocs, getDoc, getFirestore, query, where, setDoc, doc, deleteDoc, updateDoc, arrayUnion,
+    arrayRemove} from "firebase/firestore";
 import {logDebug, logError} from "../logger";
+import {deleteDir, deleteFile, downloadFile, uploadFile} from "./storage";
 
 const db = getFirestore(firebaseApp);
 
@@ -16,7 +18,7 @@ export async function createGuild(gID, gName = '', limit=5) {
     try {
         await setDoc(doc(db, "guilds", gID), {
             gName: gName,
-            sound_list: [],
+            roles: [],
             welcome_msg: "",
             sounds_limit: limit
         })
@@ -30,7 +32,7 @@ export async function createGuild(gID, gName = '', limit=5) {
 
 export async function removeGuild(gID) {
     try {
-        // TODO: Find all sounds associated and delete them
+        await deleteDir(gID)
 
         await deleteDoc(doc(db, "guilds", gID))
         return true
@@ -41,42 +43,47 @@ export async function removeGuild(gID) {
 }
 
 async function reachedLimit(gID) {
-    // TODO: Check database
     const snap = await getDoc(doc(db, 'guilds', gID))
     if(!snap.exists()) {
         logError('Document doesn\'t exist for ' + gID)
         return true
     }
 
-    logDebug(snap.data().toString())
-    // TODO: Replace with comparison on sound array with sound limit
-    return true
+    return snap.data().soundLimit > snap.data().roles.size()
 }
 
 export async function getSound(gID, roles) {
-    // TODO: Get from database
+    let guildRoles = (await getDoc(doc(db, 'guilds', gID))).data().roles
+    roles.forEach((role) => {
+        if(guildRoles.has(role)) {
+            return downloadFile(gID, role)
+        }
+    })
 
     return null
 }
 
 async function checkSound(gID, role) {
-    // TODO: Check database
+    let guildRoles = (await getDoc(doc(db, 'guilds', gID))).data().roles
 
-    return false
+    return guildRoles.has(role)
 }
 
 async function addSound(gID, role, sound) {
     if(!await reachedLimit(gID)) {
-        // TODO: Add to database
+        const gDoc = doc(db, 'guilds', gID)
 
+        await updateDoc(gDoc, {
+            roles: arrayUnion(role)
+        })
     }
     return false
 }
 
 async function updateSound(gID, role, sound) {
-    // TODO: Update in database
-
-    return false
+    if(!await deleteFile(gID, role))
+        return null
+    return await uploadFile(gID, sound, role)
 }
 
 export async function setSound(gID, role, sound) {
@@ -88,25 +95,35 @@ export async function setSound(gID, role, sound) {
 }
 
 export async function removeSound(gID, role) {
-    // TODO: Delete from database
+    const gDoc = doc(db, 'guilds', gID)
 
-    return false
+    await updateDoc(gDoc, {
+        roles: arrayRemove(role)
+    })
+
+    return await deleteFile(gID, role)
 }
 
 export async function getWelcomeMsg(gID) {
-    // TODO: Get from database
-
-    return ''
+    return (await getDoc(doc(db, 'guilds', gID))).data().welcomeMsg
 }
 
-export async function setWelcomeMsg(gID) {
-    // TODO: Update database
+export async function setWelcomeMsg(gID, msg) {
+    const gDoc = doc(db, 'guilds', gID)
 
-    return false
+    await updateDoc(gDoc, {
+        welcomeMsg: msg
+    })
+
+    return (await getDoc(doc(db, 'guilds', gID))).data().welcomeMsg === msg
 }
 
 export async function removeWelcomeMsg(gID) {
-    // TODO: Remove from database
+    const gDoc = doc(db, 'guilds', gID)
 
-    return false
+    await updateDoc(gDoc, {
+        welcomeMsg: ""
+    })
+
+    return !(await getDoc(doc(db, 'guilds', gID))).data().welcomeMsg
 }
