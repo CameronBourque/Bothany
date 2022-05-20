@@ -1,7 +1,8 @@
 import { getStorage, uploadBytes, ref, getDownloadURL, getStream, updateMetadata, listAll, getMetadata, deleteObject } from "firebase/storage";
 import {logDebug, logError} from "../logger";
+import firebaseApp from "../firebase";
 
-const storage = getStorage();
+const storage = getStorage(firebaseApp);
 
 export async function deleteDir(gID) {
     // Just empty files out, can't actually delete the directory from here
