@@ -3,10 +3,6 @@ import {logDebug, logError} from "../logger";
 
 const storage = getStorage();
 
-async function createDir(gID) {
-
-}
-
 export async function deleteDir(gID) {
     // Just empty files out, can't actually delete the directory from here
     listAll(ref(storage, gID.toString())).then((res) => {
@@ -19,30 +15,6 @@ export async function deleteDir(gID) {
     })
 
     return true
-}
-
-async function dirExists(gID) {
-    listAll(ref(storage)).then((res) => {
-        res.prefixes.forEach((dir) => {
-            if(dir.name === gID.toString()) {
-                return true
-            }
-        })
-    }).catch((err) => {
-        logError(err)
-    })
-
-    return false
-}
-
-async function filesRemain(gID) {
-    listAll(ref(storage, gID.toString())).then((res) => {
-        return res.items.length > 0
-    }).catch((err) => {
-        logError(err)
-    })
-
-    return false
 }
 
 async function findFile(gID, role) {
@@ -62,10 +34,6 @@ async function findFile(gID, role) {
 }
 
 export async function uploadFile(gID, file, role) {
-    if(!await dirExists(gID)) {
-        await createDir(gID)
-    }
-
     const metadata = {
         customMetadata: {
             'role': role
@@ -106,9 +74,15 @@ export async function downloadFile(gID, role) {
     if(file) {
         return getStream(file)
     }
+
     return null
 }
 
 export async function deleteFile(gID, role) {
+    let file = await findFile(gID, role)
+    if(file) {
+        await deleteObject(file)
+    }
 
+    return true
 }

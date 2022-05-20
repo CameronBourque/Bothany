@@ -63,7 +63,7 @@ export async function getSound(gID, roles) {
     return null
 }
 
-async function checkSound(gID, role) {
+export async function checkSound(gID, role) {
     let guildRoles = (await getDoc(doc(db, 'guilds', gID))).data().roles
 
     return guildRoles.has(role)
