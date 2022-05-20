@@ -6,7 +6,8 @@ import {logDebug, logError} from "./logger";
 import Discord from "discord.js";
 import {deployCommands} from "./deploy-commands";
 import {notifyCompletion} from "./commandHandler";
-import {createGuild, getSound, getWelcomeMsg, guildExists, removeGuild} from "./data/database";
+import {checkSound, createGuild, getSound, getWelcomeMsg, guildExists, removeGuild, removeSound} from "./data/database";
+import {updateFileRole} from "./data/storage";
 
 // Setup intents and create bot
 const botIntents = new Discord.Intents();
@@ -101,6 +102,22 @@ bot.on('guildMemberAdd', async (member) => {
         sysChan.stopTyping();
     }
 });
+
+// Handle role name change
+bot.on('roleUpdate', async (oldRole, newRole) => {
+    if(oldRole.name !== newRole.name && await checkSound(oldRole.guild.id, oldRole.name)) {
+        await updateFileRole(newRole.guild.id, oldRole.name, newRole.name)
+        logDebug('Name for role ' + oldRole.name + ' changed to ' + newRole.name)
+    }
+})
+
+// Handle role deletion
+bot.on('roleDelete', async (role) => {
+    if(await checkSound(role.guild.id, role.name)) {
+        await removeSound(role.guild.id, role.name)
+        logDebug('Role' + role.name + ' was removed')
+    }
+})
 
 // Handle removal of / from guild
 bot.on('guildDelete', async (guild) => {
