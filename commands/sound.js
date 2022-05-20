@@ -33,13 +33,13 @@ module.exports = {
         let msg = ''
 
         if(cmd.options.getSubcommand() === 'remove') {
-            success = await removeSound(gID, role)
-            msg = 'removed sound from ' + role.toString()
+            success = await removeSound(gID, role.name)
+            msg = 'removed sound from ' + role.name
         } else if (cmd.options.getSubcommand() === 'set') {
             const sound = cmd.options.getAttachment('soundfile')
 
-            success = await setSound(gID, role, sound)
-            msg = 'set sound for ' + role.toString()
+            success = await setSound(gID, role.name, sound)
+            msg = 'set sound for ' + role.name
         }
 
         await notifyCompletion(cmd, msg, success)

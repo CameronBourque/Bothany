@@ -21,8 +21,8 @@ module.exports = {
         const role = cmd.options.getRole('role')
         const sound = cmd.options.getAttachment('soundfile')
 
-        let success = await setSound(gID, role, sound)
-        let msg = 'set sound for ' + role.toString()
+        let success = await setSound(gID, role.name, sound)
+        let msg = 'set sound for ' + role.name
 
         await notifyCompletion(cmd, msg, success)
     }

@@ -17,10 +17,10 @@ module.exports = {
         const role = cmd.options.getRole('role')
 
         let success = true
-        if(await checkSound(gID, role)) {
-            success = await removeSound(gID, role)
+        if(await checkSound(gID, role.name)) {
+            success = await removeSound(gID, role.name)
         }
-        let msg = 'removed sound from ' + role.toString()
+        let msg = 'removed sound from ' + role.name
 
         await notifyCompletion(cmd, msg, success)
     }
