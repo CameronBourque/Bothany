@@ -1,6 +1,6 @@
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+const firebase = require('firebase/compat/app');
+require('firebase/compat/auth');
+require('firebase/compat/firestore');
 
 
 const firebaseConfig = {

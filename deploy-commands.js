@@ -1,8 +1,7 @@
-import fs from 'node:fs';
-import path from 'node:path';
-const { SlashCommandBuilder } = import('@discordjs/builders');
-const { REST } = import('@discordjs/rest');
-const { Routes } = import('discord-api-types/v9');
+const fs = require('node:fs');
+const path = require('node:path');
+import { REST } from '@discordjs/rest';
+const { Routes } = require('discord-api-types/v9');
 
 export async function deployCommands(id) {
     const commands = []

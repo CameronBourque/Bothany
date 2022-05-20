@@ -1,6 +1,6 @@
 import {notifyCompletion, notifyProcessing} from "../commandHandler.js";
-import {addSound, checkSound, removeSound, setSound, updateSound} from "../data/database.js";
-const { SlashCommandBuilder } = import('@discordjs/builders');
+import {addSound, removeSound, setSound, updateSound} from "../data/database.js";
+import { SlashCommandBuilder } from '@discordjs/builders';
 
 module.exports = {
     data: new SlashCommandBuilder()
