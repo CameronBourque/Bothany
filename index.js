@@ -37,9 +37,9 @@ for(const file of cmdFiles) {
 
 // Once bot is running we need some additional setup (e.g. deploy the commands!)
 bot.once('ready', () => {
-    logDebug("Bothony is active!");
+    logDebug("Bothony is active!")
 
-    deployCommands(bot.user.id);
+    deployCommands(bot.user.id).then()
 });
 
 // Login the bot
@@ -47,14 +47,14 @@ bot.login(process.env.TOKEN);
 
 //On any voice channel update
 bot.on('voiceStateUpdate', async (oldMember, newMember) => {
-    let newUserChannel = newMember.channel;
-    let oldUserChannel = oldMember.channel;
+    let newUserChannel = newMember.channel
+    let oldUserChannel = oldMember.channel
 
     if (newUserChannel !== null && !newMember.member.user.bot) { // Check user is still in a VC and not a bot
         if (newUserChannel === oldUserChannel) { // Mute / Unmute / Deafen / Undeafen
             // Do nothing
         } else {   // VC change
-            let chanName = newUserChannel.name;
+            let chanName = newUserChannel.name
             logDebug(newMember.member.user.username + ' joined ' + chanName + '!');
 
             if (newUserChannel === newUserChannel.guild.afkChannel) {  // Joined an AFK Channel
@@ -96,14 +96,14 @@ bot.on('interactionCreate', async (interaction) => {
 bot.on('guildMemberAdd', async (member) => {
     let msg = await getWelcomeMsg(member.guild.id)
     if (msg) {
-        let sysChan = member.guild.systemChannel;
-        sysChan.startTyping();
+        let sysChan = member.guild.systemChannel
+        sysChan.startTyping()
 
         sysChan.send(msg)
             .then(message => logDebug('Introduced new member, ' + member.user.username + ' to ' + member.guild.name))
-            .catch(logError);
+            .catch(logError)
 
-        sysChan.stopTyping();
+        sysChan.stopTyping()
     }
 });
 
