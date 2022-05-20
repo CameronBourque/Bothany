@@ -1,3 +1,9 @@
+import {fileURLToPath} from "node:url";
+import path from "node:path";
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
 export async function playSound (userChannel, sound) {
     userChannel.join().then(connection => {
         //TODO: Replace this with getting soundfile from storage/db

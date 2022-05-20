@@ -8,6 +8,10 @@ import {deployCommands} from "./deploy-commands.js";
 import {notifyCompletion} from "./commandHandler.js";
 import {checkSound, createGuild, getSound, getWelcomeMsg, guildExists, removeGuild, removeSound} from "./data/database.js";
 import {updateFileRole} from "./data/storage.js";
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 // Setup intents and create bot
 const botIntents = new Discord.Intents();
