@@ -1,13 +1,13 @@
 import {} from 'dotenv/config';
 import fs from 'node:fs';
 import path from 'node:path';
-import {playSound} from "./audio";
-import {logDebug, logError} from "./logger";
+import {playSound} from "./audio.js";
+import {logDebug, logError} from "./logger.js";
 import Discord from "discord.js";
-import {deployCommands} from "./deploy-commands";
-import {notifyCompletion} from "./commandHandler";
-import {checkSound, createGuild, getSound, getWelcomeMsg, guildExists, removeGuild, removeSound} from "./data/database";
-import {updateFileRole} from "./data/storage";
+import {deployCommands} from "./deploy-commands.js";
+import {notifyCompletion} from "./commandHandler.js";
+import {checkSound, createGuild, getSound, getWelcomeMsg, guildExists, removeGuild, removeSound} from "./data/database.js";
+import {updateFileRole} from "./data/storage.js";
 
 // Setup intents and create bot
 const botIntents = new Discord.Intents();

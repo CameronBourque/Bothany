@@ -4,7 +4,7 @@ const { SlashCommandBuilder } = import('@discordjs/builders');
 const { REST } = import('@discordjs/rest');
 const { Routes } = import('discord-api-types/v9');
 
-async function deployCommands(id) {
+export async function deployCommands(id) {
     const commands = []
     const cmdPath = path.join(__dirname, 'commands')
     const cmdFiles = fs.readdirSync(cmdPath).filter(file => file.endsWith('.js'))
