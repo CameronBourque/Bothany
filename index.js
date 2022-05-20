@@ -30,7 +30,7 @@ const cmdFiles = fs.readdirSync(cmdPath).filter(file => file.endsWith('.js'))
 
 for(const file of cmdFiles) {
     const filePath = path.join(cmdPath, file)
-    const cmd = import(filePath)
+    const cmd = await import(filePath)
 
     bot.commands.set(cmd.data.name, cmd)
 }
