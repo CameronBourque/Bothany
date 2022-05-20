@@ -1,7 +1,7 @@
 import { getStorage, uploadBytes, ref, getDownloadURL, getStream, updateMetadata, listAll, getMetadata, deleteObject } from
     "firebase/storage";
-const {logDebug, logError} = require("../logger");
-const firebaseApp = require("../firebase");
+import {logDebug, logError} from "../logger";
+import firebaseApp from "../firebase";
 
 const storage = getStorage(firebaseApp);
 

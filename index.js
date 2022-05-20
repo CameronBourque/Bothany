@@ -1,13 +1,13 @@
-const {} = require('dotenv/config');
-const fs = require('node:fs');
-const path = require('node:path');
-const {playSound} = require("./audio");
-const {logDebug, logError} = require("./logger");
+import {} from 'dotenv/config';
+import fs from 'node:fs';
+import path from 'node:path';
+import {playSound} from "./audio";
+import {logDebug, logError} from "./logger";
+import {deployCommands} from "./deploy-commands";
+import {notifyCompletion} from "./commandHandler";
+import {checkSound, createGuild, getSound, getWelcomeMsg, guildExists, removeGuild, removeSound} from "./data/database";
+import {updateFileRole} from "./data/storage";
 const Discord = require("discord.js");
-const {deployCommands} = require("./deploy-commands");
-const {notifyCompletion} = require("./commandHandler");
-const {checkSound, createGuild, getSound, getWelcomeMsg, guildExists, removeGuild, removeSound} = require("./data/database");
-const {updateFileRole} = require("./data/storage");
 
 // Setup intents and create bot
 const botIntents = new Discord.Intents();
