@@ -2,7 +2,7 @@ import {notifyCompletion, notifyProcessing} from "../commandHandler.js";
 import {checkSound, removeSound} from "../data/database.js";
 import { SlashCommandBuilder } from '@discordjs/builders';
 
-module.exports = {
+export default {
     data: new SlashCommandBuilder()
         .setName('remove')
         .setDescription('Stops playing sounds users of the specified role when they join a voice channel.')

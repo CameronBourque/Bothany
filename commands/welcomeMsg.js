@@ -2,7 +2,7 @@ import {notifyCompletion, notifyProcessing} from "../commandHandler.js";
 import {removeWelcomeMsg, setWelcomeMsg} from "../data/database.js";
 import { SlashCommandBuilder } from '@discordjs/builders';
 
-module.exports = {
+export default {
     data: new SlashCommandBuilder()
         .setName('welcome message')
         .setDescription('Manages Bothany\'s welcome message for new users in the server.')

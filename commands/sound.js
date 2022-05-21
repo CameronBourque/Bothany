@@ -2,7 +2,7 @@ import {notifyCompletion, notifyProcessing} from "../commandHandler.js";
 import {addSound, removeSound, setSound, updateSound} from "../data/database.js";
 import { SlashCommandBuilder } from '@discordjs/builders';
 
-module.exports = {
+export default {
     data: new SlashCommandBuilder()
         .setName('sound')
         .setDescription('Manage what sounds are played when a user joins a voice channel.')
