@@ -27,21 +27,17 @@ const bot = new Discord.Client({ intents: botIntents });
 // Attach commands
 bot.commands = new Discord.Collection();
 let cmdPath = path.join(__dirname, 'commands')
+if(process.platform === "win32") {
+    cmdPath = 'file://' + cmdPath
+}
 const cmdFiles = fs.readdirSync(cmdPath).filter(file => file.endsWith('.js'))
 
 for(const file of cmdFiles) {
-    if(process.platform === "win32") {
-        cmdPath = 'file://' + cmdPath
-    }
     const filePath = path.join(cmdPath, file)
+    logDebug(filePath)
     const cmd = await import(filePath)
 
-    logDebug(cmd)
-    logDebug('NOW CHECK DATA')
-    logDebug(cmd.data)
-    logDebug('NOW CHECK NAME')
-    logDebug(cmd.data.name)
-    bot.commands.set(cmd.data.name, cmd)
+    bot.commands.set(cmd.default.data.name, cmd.default)
 }
 
 // Once bot is running we need some additional setup (e.g. deploy the commands!)
