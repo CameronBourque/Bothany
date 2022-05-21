@@ -31,7 +31,7 @@ const cmdFiles = fs.readdirSync(cmdPath).filter(file => file.endsWith('.js'))
 
 for(const file of cmdFiles) {
     const filePath = path.join(cmdPath, file)
-    const cmd = await import(filePath).default
+    const cmd = await import(filePath)
 
     logDebug(cmd)
     logDebug('NOW CHECK DATA')
