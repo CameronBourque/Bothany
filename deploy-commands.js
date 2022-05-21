@@ -10,14 +10,17 @@ const __dirname = path.dirname(__filename)
 
 export async function deployCommands(id) {
     const commands = []
-    const cmdPath = path.join(__dirname, 'commands')
+    let cmdPath = path.join(__dirname, 'commands')
     const cmdFiles = fs.readdirSync(cmdPath).filter(file => file.endsWith('.js'))
+    if(process.platform === "win32") {
+        cmdPath = 'file://' + cmdPath
+    }
 
     for(const file of cmdFiles) {
         const filePath = path.join(cmdPath, file)
         const cmd = import(filePath)
 
-        commands.push(cmd.data.toJSON())
+        commands.push(cmd.default.data.toJSON())
     }
 
     const rest = new REST({version: '10'}).setToken(process.env.TOKEN);
