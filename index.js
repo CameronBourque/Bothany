@@ -33,6 +33,7 @@ for(const file of cmdFiles) {
     const filePath = path.join(cmdPath, file)
     const cmd = await import(filePath)
 
+    logDebug(cmd.toString())
     bot.commands.set(cmd.data.name, cmd)
 }
 
