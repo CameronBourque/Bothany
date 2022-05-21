@@ -18,7 +18,7 @@ export async function deployCommands(id) {
 
     for(const file of cmdFiles) {
         const filePath = path.join(cmdPath, file)
-        const cmd = import(filePath)
+        const cmd = await import(filePath)
 
         commands.push(cmd.default.data.toJSON())
     }
