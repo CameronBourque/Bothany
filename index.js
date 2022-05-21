@@ -9,6 +9,7 @@ import {checkSound, createGuild, getSound, getWelcomeMsg, guildExists, removeGui
     from "./data/database.js";
 import {updateFileRole} from "./data/storage.js";
 import Discord from "discord.js";
+import 'dotenv/config';
 
 // Fix dirname since we can't use require
 const __filename = fileURLToPath(import.meta.url)
@@ -34,7 +35,6 @@ if(process.platform === "win32") {
 
 for(const file of cmdFiles) {
     const filePath = path.join(cmdPath, file)
-    logDebug(filePath)
     const cmd = await import(filePath)
 
     bot.commands.set(cmd.default.data.name, cmd.default)
