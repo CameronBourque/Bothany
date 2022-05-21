@@ -1,4 +1,9 @@
-const path = require("node:path");
+import path from 'path';
+import {fileURLToPath} from "url";
+
+// Fix dirname since we can't use require
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 export async function playSound (userChannel, sound) {
     userChannel.join().then(connection => {

@@ -1,8 +1,8 @@
-import firebaseApp from "../firebase";
+import firebaseApp from "../firebase.js";
 import {collection, getDocs, getDoc, getFirestore, query, where, setDoc, doc, deleteDoc, updateDoc, arrayUnion,
     arrayRemove} from "firebase/firestore";
-import {logDebug, logError} from "../logger";
-import {deleteDir, deleteFile, downloadFile, uploadFile} from "./storage";
+import {logDebug, logError} from "../logger.js";
+import {deleteDir, deleteFile, downloadFile, uploadFile} from "./storage.js";
 
 const db = getFirestore(firebaseApp);
 

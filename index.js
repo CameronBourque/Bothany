@@ -1,13 +1,18 @@
-import {} from 'dotenv/config';
-import fs from 'node:fs';
-import path from 'node:path';
-import {playSound} from "./audio";
-import {logDebug, logError} from "./logger";
-import {deployCommands} from "./deploy-commands";
-import {notifyCompletion} from "./commandHandler";
-import {checkSound, createGuild, getSound, getWelcomeMsg, guildExists, removeGuild, removeSound} from "./data/database";
-import {updateFileRole} from "./data/storage";
-const Discord = require("discord.js");
+import fs from 'fs';
+import path from 'path';
+import {fileURLToPath} from 'url';
+import {playSound} from "./audio.js";
+import {logDebug, logError} from "./logger.js";
+import {deployCommands} from "./deploy-commands.js";
+import {notifyCompletion} from "./commandHandler.js";
+import {checkSound, createGuild, getSound, getWelcomeMsg, guildExists, removeGuild, removeSound}
+    from "./data/database.js";
+import {updateFileRole} from "./data/storage.js";
+import Discord from "discord.js";
+
+// Fix dirname since we can't use require
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 // Setup intents and create bot
 const botIntents = new Discord.Intents();
@@ -26,7 +31,7 @@ const cmdFiles = fs.readdirSync(cmdPath).filter(file => file.endsWith('.js'))
 
 for(const file of cmdFiles) {
     const filePath = path.join(cmdPath, file)
-    const cmd = require(filePath)
+    const cmd = await import(filePath)
 
     bot.commands.set(cmd.data.name, cmd)
 }
