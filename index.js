@@ -34,6 +34,10 @@ for(const file of cmdFiles) {
     const cmd = await import(filePath)
 
     logDebug(cmd)
+    logDebug('NOW CHECK DATA')
+    logDebug(cmd.data)
+    logDebug('NOW CHECK NAME')
+    logDebug(cmd.data.name)
     bot.commands.set(cmd.data.name, cmd)
 }
 
