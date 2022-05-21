@@ -1,6 +1,12 @@
-import fs from 'node:fs';
+import fs from 'fs';
+import path from 'path';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
+import {fileURLToPath} from "url";
+
+// Fix dirname since we can't use require
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 export async function deployCommands(id) {
     const commands = []
