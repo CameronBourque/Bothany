@@ -3,13 +3,14 @@ import path from 'path';
 import {fileURLToPath} from 'url';
 import {playSound} from "./audio.js";
 import {logDebug, logError} from "./logger.js";
-import {deployCommands} from "./deploy-commands.js";
 import {notifyCompletion} from "./commandHandler.js";
 import {checkSound, createGuild, getSound, getWelcomeMsg, guildExists, removeGuild, removeSound}
     from "./data/database.js";
 import {updateFileRole} from "./data/storage.js";
 import Discord from "discord.js";
 import 'dotenv/config';
+import {REST} from "@discordjs/rest";
+import {Routes} from "discord-api-types/v9";
 
 // Fix dirname since we can't use require
 const __filename = fileURLToPath(import.meta.url)
@@ -17,16 +18,14 @@ const __dirname = path.dirname(__filename)
 
 // Setup intents and create bot
 const botIntents = new Discord.Intents();
-botIntents.add(Discord.Intents.FLAGS.GUILD_MESSAGES,
+botIntents.add(Discord.Intents.FLAGS.GUILDS,
     Discord.Intents.FLAGS.GUILD_MEMBERS,
     Discord.Intents.FLAGS.GUILD_VOICE_STATES,
-    Discord.Intents.FLAGS.GUILD_MESSAGE_TYPING,
-    Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
 )
 const bot = new Discord.Client({ intents: botIntents });
 
 // Attach commands
-bot.commands = new Discord.Collection();
+bot.commands = [];
 let cmdPath = path.join(__dirname, 'commands')
 const cmdFiles = fs.readdirSync(cmdPath).filter(file => file.endsWith('.js'))
 if(process.platform === "win32") {
@@ -37,14 +36,20 @@ for(const file of cmdFiles) {
     const filePath = path.join(cmdPath, file)
     const cmd = await import(filePath)
 
-    bot.commands.set(cmd.default.data.name, cmd.default)
+    bot.commands.push(cmd.default.data.toJSON())
 }
 
 // Once bot is running we need some additional setup (e.g. deploy the commands!)
 bot.once('ready', () => {
     logDebug("Bothony is active!")
 
-    deployCommands(bot.user.id).then()
+    const rest = new REST({version: '9'}).setToken(process.env.TOKEN);
+
+    rest.put(
+        Routes.applicationCommands(bot.application.id),
+        { body: bot.commands },
+    ).then();
+    logDebug("Commands deployed!")
 });
 
 // Login the bot
@@ -60,6 +65,7 @@ bot.on('voiceStateUpdate', async (oldMember, newMember) => {
             // Do nothing
         } else {   // VC change
             let chanName = newUserChannel.name
+            logDebug(newMember.guild.id)
             logDebug(newMember.member.user.username + ' joined ' + chanName + '!');
 
             if (newUserChannel === newUserChannel.guild.afkChannel) {  // Joined an AFK Channel
@@ -67,7 +73,7 @@ bot.on('voiceStateUpdate', async (oldMember, newMember) => {
             } else {    // Switched to another channel
                 let sound = getSound(newUserChannel.guild.id, newMember.member.roles)
                 if (sound) {
-                    await playSound(sound)
+                    await playSound(newUserChannel, sound)
                 }
             }
         }
