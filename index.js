@@ -21,6 +21,7 @@ const botIntents = new Discord.Intents();
 botIntents.add(Discord.Intents.FLAGS.GUILDS,
     Discord.Intents.FLAGS.GUILD_MEMBERS,
     Discord.Intents.FLAGS.GUILD_VOICE_STATES,
+    Discord.Intents.FLAGS.GUILD_MESSAGES,
 )
 const bot = new Discord.Client({ intents: botIntents });
 
@@ -65,8 +66,10 @@ bot.on('voiceStateUpdate', async (oldMember, newMember) => {
             // Do nothing
         } else {   // VC change
             let chanName = newUserChannel.name
-            logDebug(newMember.guild.id)
             logDebug(newMember.member.user.username + ' joined ' + chanName + '!');
+            if(!await guildExists(newUserChannel.guildId)) {
+                await createGuild(newUserChannel.guildId, newUserChannel.guild.name)
+            }
 
             if (newUserChannel === newUserChannel.guild.afkChannel) {  // Joined an AFK Channel
                 // Do nothing
@@ -138,5 +141,12 @@ bot.on('roleDelete', async (role) => {
 bot.on('guildDelete', async (guild) => {
     if(await guildExists(guild.id)) {
         await removeGuild(guild.id)
+    }
+})
+
+// Handle joining to guild
+bot.on('guildCreate', async (guild) => {
+    if(!await guildExists(guild.id)) {
+        await createGuild(guild.id)
     }
 })
