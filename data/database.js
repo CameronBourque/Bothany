@@ -20,7 +20,8 @@ export async function createGuild(gID, gName = '', limit=5) {
             gName: gName,
             roles: [],
             welcome_msg: "",
-            sounds_limit: limit
+            sounds_limit: limit,
+            poggers_kick: false,
         })
         logDebug("Created document for guild " + gID + " with a sound limit of " + limit)
         return true
@@ -126,4 +127,8 @@ export async function removeWelcomeMsg(gID) {
     })
 
     return !(await getDoc(doc(db, 'guilds', gID))).data().welcomeMsg
+}
+
+export async function togglePoggerKick(gID, value) {
+    // TODO: toggle it based on the bool value
 }
