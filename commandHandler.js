@@ -10,7 +10,7 @@ export async function notifyCompletion(cmd, msg, success, ephemeral = false) {
         outcome = 'Successfully '
     }
 
-    await cmd.reply({
+    await cmd.editReply({
         content: outcome + msg,
         ephemeral: ephemeral
     })
