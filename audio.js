@@ -1,12 +1,7 @@
 import path from 'path';
 import {fileURLToPath} from "url";
-import {
-    AudioPlayerStatus,
-    createAudioPlayer,
-    createAudioResource,
-    joinVoiceChannel,
-    VoiceConnectionStatus
-} from "@discordjs/voice";
+import {AudioPlayerStatus, createAudioPlayer, createAudioResource, joinVoiceChannel, VoiceConnectionStatus }
+    from "@discordjs/voice";
 
 // Fix dirname since we can't use require
 const __filename = fileURLToPath(import.meta.url)
