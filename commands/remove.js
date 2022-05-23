@@ -5,7 +5,7 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 export default {
     data: new SlashCommandBuilder()
         .setName('remove')
-        .setDescription('Stops playing sounds users of the specified role when they join a voice channel.')
+        .setDescription('Stops playing sounds for users of the specified role when they join a voice channel.')
         .addRoleOption(option =>
             option.setName('role')
                 .setDescription('The role to remove the sound for.')

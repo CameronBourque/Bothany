@@ -4,7 +4,7 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 
 export default {
     data: new SlashCommandBuilder()
-        .setName('welcome message')
+        .setName('welcome_message')
         .setDescription('Manages Bothany\'s welcome message for new users in the server.')
         .addSubcommand(subcommand =>
             subcommand.setName('set')

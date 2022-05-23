@@ -8,7 +8,7 @@ export default {
         .setDescription('Manage what sounds are played when a user joins a voice channel.')
         .addSubcommand(subcommand =>
             subcommand.setName('remove')
-                .setDescription('Stops playing sounds users of the specified role when they join a voice channel.')
+                .setDescription('Stops playing sounds for users of the specified role when they join a voice channel.')
                 .addRoleOption(option =>
                     option.setName('role')
                         .setDescription('The role to remove the sound for.')
