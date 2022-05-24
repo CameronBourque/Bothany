@@ -1,4 +1,4 @@
-import {notifyCompletion, notifyProcessing} from "../commandHandler.js";
+import {notifyCompletion, notifyProcessing} from "../messageSender.js";
 import {removeWelcomeMsg, setWelcomeMsg} from "../data/database.js";
 import { SlashCommandBuilder } from '@discordjs/builders';
 import {logDebug, logError} from "../logger.js";

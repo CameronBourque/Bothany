@@ -1,4 +1,4 @@
-import {notifyCompletion, notifyProcessing} from "../commandHandler.js";
+import {notifyCompletion, notifyProcessing} from "../messageSender.js";
 import {removeSound, setSound} from "../data/database.js";
 import { SlashCommandBuilder } from '@discordjs/builders';
 import {logError} from "../logger.js";

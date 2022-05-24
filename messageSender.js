@@ -15,3 +15,12 @@ export async function notifyCompletion(cmd, msg, success, ephemeral = false) {
         ephemeral: ephemeral
     })
 }
+
+// Display help to user
+export async function displayHelp(cmd) {
+    let help = ''
+
+    await cmd.editReply({
+        content: help
+    })
+}
