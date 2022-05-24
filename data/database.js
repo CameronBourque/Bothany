@@ -113,7 +113,23 @@ export async function removeSound(gID, role) {
 }
 
 export async function updateRole(gID, oldRole, newRole) {
+    try {
+        const gDoc = doc(db, 'guilds', gID)
+        if(await checkSound(gID, oldRole)) {
+            let guildRoles = (await getDoc(gDoc)).data().roles
 
+            await updateDoc(gDoc, {
+                [`roles.${oldRole}`]: deleteField(),
+                [`roles.${newRole}`]: guildRoles[oldRole]
+            })
+        }
+
+        return true
+    } catch (err) {
+        logError(err)
+    }
+
+    return false
 }
 
 export async function getWelcomeMsg(gID) {
