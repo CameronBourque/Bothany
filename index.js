@@ -65,6 +65,9 @@ bot.once('ready', () => {
         { body: commands },
     ).then();
     logDebug("Commands deployed!")
+
+    // Notify guilds of important update information
+    sendUpdateInfo(bot)
 });
 
 // Login the bot
