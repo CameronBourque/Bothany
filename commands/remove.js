@@ -1,6 +1,7 @@
 import {notifyCompletion, notifyProcessing} from "../commandHandler.js";
 import {checkSound, removeSound} from "../data/database.js";
 import { SlashCommandBuilder } from '@discordjs/builders';
+import {logError} from "../logger.js";
 
 export default {
     data: new SlashCommandBuilder()
@@ -16,12 +17,17 @@ export default {
         const gID = cmd.guildId
         const role = cmd.options.getRole('role')
 
-        let success = true
-        if(await checkSound(gID, role.name)) {
-            success = await removeSound(gID, role.name)
-        }
+        let success = false
         let msg = 'removed sound from ' + role.name
 
-        await notifyCompletion(cmd, msg, success)
+        try {
+            if (await checkSound(gID, role.name)) {
+                success = await removeSound(gID, role.name)
+            }
+        } catch (err) {
+            logError(err)
+        } finally {
+            await notifyCompletion(cmd, msg, success)
+        }
     }
 }

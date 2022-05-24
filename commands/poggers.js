@@ -1,6 +1,7 @@
 import {notifyCompletion, notifyProcessing} from "../commandHandler.js";
 import {togglePoggerKick} from "../data/database.js";
 import {SlashCommandBuilder} from '@discordjs/builders';
+import {logError} from "../logger.js";
 
 export default {
     data: new SlashCommandBuilder()
@@ -16,13 +17,19 @@ export default {
         const gID = cmd.guildId
         const val = cmd.options.getBoolean('value')
 
-        let success = await togglePoggerKick(gID, val)
         let msg = 'decided '
         if (!val) {
             msg = msg + 'not '
         }
         msg = msg + 'to kick people who say poggers'
 
-        await notifyCompletion(cmd, msg, success)
+        let success = false
+        try {
+            success = await togglePoggerKick(gID, val)
+        } catch (err) {
+            logError(err)
+        } finally {
+            await notifyCompletion(cmd, msg, success)
+        }
     }
 }

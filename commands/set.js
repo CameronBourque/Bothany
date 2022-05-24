@@ -1,6 +1,7 @@
 import {notifyCompletion, notifyProcessing} from "../commandHandler.js";
 import {setSound} from "../data/database.js";
 import { SlashCommandBuilder } from '@discordjs/builders';
+import {logError} from "../logger.js";
 
 export default {
     data: new SlashCommandBuilder()
@@ -21,9 +22,15 @@ export default {
         const role = cmd.options.getRole('role')
         const sound = cmd.options.getAttachment('soundfile')
 
-        let success = await setSound(gID, role.name, sound)
+        let success = false
         let msg = 'set sound for ' + role.name
 
-        await notifyCompletion(cmd, msg, success)
+        try {
+            success = await setSound(gID, role.name, sound)
+        } catch (err) {
+            logError(err)
+        } finally {
+            await notifyCompletion(cmd, msg, success)
+        }
     }
 }

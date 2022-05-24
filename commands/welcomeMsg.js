@@ -1,6 +1,7 @@
 import {notifyCompletion, notifyProcessing} from "../commandHandler.js";
 import {removeWelcomeMsg, setWelcomeMsg} from "../data/database.js";
 import { SlashCommandBuilder } from '@discordjs/builders';
+import {logError} from "../logger.js";
 
 export default {
     data: new SlashCommandBuilder()
@@ -23,14 +24,18 @@ export default {
         let success = false
         let msg = ''
 
-        if(cmd.options.getSubcommand() === 'remove') {
-            success = removeWelcomeMsg(gID)
-            msg = 'removed welcome message'
-        } else if (cmd.options.getSubcommand() === 'add') {
-            success = setWelcomeMsg(gID)
-            msg = 'set welcome message'
+        try {
+            if (cmd.options.getSubcommand() === 'remove') {
+                success = removeWelcomeMsg(gID)
+                msg = 'removed welcome message'
+            } else if (cmd.options.getSubcommand() === 'set') {
+                success = setWelcomeMsg(gID)
+                msg = 'set welcome message'
+            }
+        } catch (err) {
+            logError(err)
+        } finally {
+            await notifyCompletion(cmd, msg, success)
         }
-
-        await notifyCompletion(cmd, msg, success)
     }
 }

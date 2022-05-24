@@ -3,7 +3,6 @@ import path from 'path';
 import {fileURLToPath} from 'url';
 import {playSound} from "./audio.js";
 import {logDebug, logError} from "./logger.js";
-import {notifyCompletion} from "./commandHandler.js";
 import {checkSound, createGuild, getSound, getWelcomeMsg, guildExists, removeGuild, removeSound}
     from "./data/database.js";
 import {updateFileRole} from "./data/storage.js";
@@ -26,7 +25,8 @@ botIntents.add(Discord.Intents.FLAGS.GUILDS,
 const bot = new Discord.Client({ intents: botIntents });
 
 // Attach commands
-bot.commands = [];
+bot.commands = new Discord.Collection()
+let commands = []
 let cmdPath = path.join(__dirname, 'commands')
 const cmdFiles = fs.readdirSync(cmdPath).filter(file => file.endsWith('.js'))
 if(process.platform === "win32") {
@@ -37,7 +37,8 @@ for(const file of cmdFiles) {
     const filePath = path.join(cmdPath, file)
     const cmd = await import(filePath)
 
-    bot.commands.push(cmd.default.data.toJSON())
+    bot.commands.set(cmd.default.data.name, cmd.default)
+    commands.push(cmd.default.data.toJSON())
 }
 
 // Once bot is running we need some additional setup (e.g. deploy the commands!)
@@ -48,7 +49,7 @@ bot.once('ready', () => {
 
     rest.put(
         Routes.applicationCommands(bot.application.id),
-        { body: bot.commands },
+        { body: commands },
     ).then();
     logDebug("Commands deployed!")
 });
@@ -84,13 +85,13 @@ bot.on('voiceStateUpdate', async (oldMember, newMember) => {
 bot.on('interactionCreate', async (interaction) => {
     // If it's a command we want to process it
     if (interaction.isCommand()) {
-        const cmd = bot.commands.get(interaction.commandName)
+        const cmd = bot.commands.find(element => element.name === interaction.commandName)
         if (cmd) {
             try {
+                logDebug(cmd)
                 await cmd.execute(interaction)
             } catch(err) {
                 logError(err)
-                await notifyCompletion(interaction, 'process the command.', false, true)
             }
         }
     }

@@ -1,6 +1,7 @@
 import {notifyCompletion, notifyProcessing} from "../commandHandler.js";
 import {removeSound, setSound} from "../data/database.js";
 import { SlashCommandBuilder } from '@discordjs/builders';
+import {logError} from "../logger.js";
 
 export default {
     data: new SlashCommandBuilder()
@@ -32,16 +33,20 @@ export default {
         let success = false
         let msg = ''
 
-        if(cmd.options.getSubcommand() === 'remove') {
-            success = await removeSound(gID, role.name)
-            msg = 'removed sound from ' + role.name
-        } else if (cmd.options.getSubcommand() === 'set') {
-            const sound = cmd.options.getAttachment('soundfile')
+        try {
+            if (cmd.options.getSubcommand() === 'remove') {
+                success = await removeSound(gID, role.name)
+                msg = 'removed sound from ' + role.name
+            } else if (cmd.options.getSubcommand() === 'set') {
+                const sound = cmd.options.getAttachment('soundfile')
 
-            success = await setSound(gID, role.name, sound)
-            msg = 'set sound for ' + role.name
+                success = await setSound(gID, role.name, sound)
+                msg = 'set sound for ' + role.name
+            }
+        } catch (err) {
+            logError(err)
+        } finally {
+            await notifyCompletion(cmd, msg, success)
         }
-
-        await notifyCompletion(cmd, msg, success)
     }
 }
