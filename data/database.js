@@ -50,12 +50,13 @@ export async function removeGuild(gID) {
 }
 
 export async function getSound(gID, roles) {
+    let result = null
     try {
         if (roles) {
             let guildRoles = (await getDoc(doc(db, 'guilds', gID))).data().roles
             roles.cache.forEach((role) => {
                 if (guildRoles[role.name]) {
-                    return downloadFile(gID, role.name)
+                    result = guildRoles[role.name]
                 }
             })
         }
@@ -63,7 +64,7 @@ export async function getSound(gID, roles) {
         logError(err)
     }
 
-    return null
+    return result
 }
 
 export async function checkSound(gID, role) {
