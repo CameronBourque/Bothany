@@ -3,9 +3,8 @@ import path from 'path';
 import {fileURLToPath} from 'url';
 import {playSound} from "./audio.js";
 import {logDebug, logError} from "./logger.js";
-import {checkSound, createGuild, getSound, getWelcomeMsg, guildExists, removeGuild, removeSound}
+import {checkSound, createGuild, getSound, getWelcomeMsg, guildExists, removeGuild, removeSound, updateRole}
     from "./data/database.js";
-import {updateFileRole} from "./data/storage.js";
 import Discord from "discord.js";
 import 'dotenv/config';
 import {REST} from "@discordjs/rest";
@@ -119,7 +118,7 @@ bot.on('guildMemberAdd', async (member) => {
 // Handle role name change
 bot.on('roleUpdate', async (oldRole, newRole) => {
     if(oldRole.name !== newRole.name && await checkSound(oldRole.guild.id, oldRole.name)) {
-        await updateFileRole(newRole.guild.id, oldRole.name, newRole.name)
+        await updateRole(newRole.guild.id, oldRole.name, newRole.name)
         logDebug('Name for role ' + oldRole.name + ' changed to ' + newRole.name)
     }
 })

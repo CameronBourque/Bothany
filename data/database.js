@@ -2,7 +2,6 @@ import firebaseApp from "../firebase.js";
 import {collection, getDocs, getDoc, getFirestore, query, where, setDoc, doc, deleteDoc, updateDoc, arrayUnion,
     arrayRemove, deleteField} from "firebase/firestore";
 import {logDebug, logError} from "../logger.js";
-import {deleteDir, deleteFile, downloadFile, uploadFile} from "./storage.js";
 
 const db = getFirestore(firebaseApp);
 
@@ -111,6 +110,10 @@ export async function removeSound(gID, role) {
     }
 
     return false
+}
+
+export async function updateRole(gID, oldRole, newRole) {
+
 }
 
 export async function getWelcomeMsg(gID) {
