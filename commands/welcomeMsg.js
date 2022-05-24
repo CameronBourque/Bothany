@@ -30,7 +30,7 @@ export default {
                 msg = 'removed welcome message'
             } else if (cmd.options.getSubcommand() === 'set') {
                 success = setWelcomeMsg(gID)
-                msg = 'set welcome message'
+                msg = 'set welcome message to ' + msg
             }
         } catch (err) {
             logError(err)
