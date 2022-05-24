@@ -175,19 +175,20 @@ export async function removeWelcomeMsg(gID) {
 }
 
 export async function isKickable(gID, message) {
+    let out = ''
+
     try {
         const words = (await getDoc(doc(db, 'guilds', gID))).data().kickableWords
-
         words.forEach((word) => {
-            if(message.toLowerCase().includes(word.toLowerCase())) {
-                return word
+            if(message.toLowerCase().indexOf(word.toLowerCase()) !== -1) {
+                out = word
             }
         })
     } catch (err) {
         logError(err)
     }
 
-    return ''
+    return out
 }
 
 export async function addKickWord(gID, word) {

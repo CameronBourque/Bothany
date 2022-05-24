@@ -3,9 +3,9 @@ import path from 'path';
 import {fileURLToPath} from 'url';
 import {playSound} from "./audio.js";
 import {logDebug, logError} from "./logger.js";
-import {checkSound, createGuild, getSound, getWelcomeMsg, guildExists, removeGuild, removeSound, updateRole}
+import {checkSound, createGuild, getSound, getWelcomeMsg, guildExists, isKickable, removeGuild, removeSound, updateRole}
     from "./data/database.js";
-import Discord from "discord.js";
+import Discord, {Permissions} from "discord.js";
 import 'dotenv/config';
 import {REST} from "@discordjs/rest";
 import {Routes} from "discord-api-types/v9";
@@ -51,6 +51,8 @@ bot.once('ready', () => {
         { body: commands },
     ).then();
     logDebug("Commands deployed!")
+
+    // Notify guilds of important update information
 });
 
 // Login the bot
@@ -94,8 +96,17 @@ bot.on('interactionCreate', async (interaction) => {
         }
     }
 
-    // TODO: Add other interactions in the future
-    // TODO: E.G. Want a similarity comparison on sound files too
+    // TODO: Add other interactions in the future?
+})
+
+// When someone sends a message, handle it
+bot.on('messageCreate', async (message) => {
+    if(!message.author.bot && !message.system && !message.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+        let kick = await isKickable(message.guildId, message.content)
+        if(kick) {
+            message.guild.members.kick(message, message.author.username + ' said a bad word! (' + kick + ')')
+        }
+    }
 })
 
 // Handle when a new person joins the server
