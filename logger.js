@@ -8,5 +8,5 @@ export function logDebug(msg) {
 }
 
 export function logError(error) {
-    console.error('ERROR: ' + error);
+    console.error('ERROR: ' + error, error.stack);
 }
