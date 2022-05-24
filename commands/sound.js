@@ -35,13 +35,12 @@ export default {
 
         try {
             if (cmd.options.getSubcommand() === 'remove') {
-                success = await removeSound(gID, role.name)
                 msg = 'removed sound from ' + role.name
+                success = await removeSound(gID, role.name)
             } else if (cmd.options.getSubcommand() === 'set') {
                 const sound = cmd.options.getAttachment('soundfile')
-
-                success = await setSound(gID, role.name, sound)
                 msg = 'set sound for ' + role.name
+                success = await setSound(gID, role.name, sound)
             }
         } catch (err) {
             logError(err)
