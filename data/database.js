@@ -174,6 +174,46 @@ export async function removeWelcomeMsg(gID) {
     return false
 }
 
-export async function togglePoggerKick(gID, value) {
-    // TODO: toggle it based on the bool value
+export async function isKickable(gID, message) {
+    try {
+        const words = (await getDoc(doc(db, 'guilds', gID))).data().kickableWords
+
+        words.forEach((word) => {
+            if(message.toLowerCase().includes(word.toLowerCase())) {
+                return word
+            }
+        })
+    } catch (err) {
+        logError(err)
+    }
+
+    return ''
+}
+
+export async function addKickWord(gID, word) {
+    try {
+        const gDoc = doc(db, 'guilds', gID)
+
+        await updateDoc(gDoc, {
+            kickableWords: arrayUnion(word)
+        })
+    } catch (err) {
+        logError(err)
+    }
+
+    return false
+}
+
+export async function removeKickWord(gID, word) {
+    try {
+        const gDoc = doc(db, 'guilds', gID)
+
+        await updateDoc(gDoc, {
+            kickableWords: arrayRemove(word)
+        })
+    } catch (err) {
+        logError(err)
+    }
+
+    return false
 }
