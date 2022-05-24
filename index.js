@@ -103,14 +103,16 @@ bot.on('interactionCreate', async (interaction) => {
 bot.on('guildMemberAdd', async (member) => {
     let msg = await getWelcomeMsg(member.guild.id)
     if (msg) {
+        while(msg.indexOf('${user}') !== -1) {
+            msg = msg.replace('${user}', `<@${member.id}>`)
+        }
         let sysChan = member.guild.systemChannel
-        sysChan.startTyping()
+        await sysChan.sendTyping()
 
         sysChan.send(msg)
-            .then(message => logDebug('Introduced new member, ' + member.user.username + ' to ' + member.guild.name))
+            .then(message => logDebug('Introduced new member, ' + member.user.username + ' to ' + member.guild.name
+                + ' with ' + message.content))
             .catch(logError)
-
-        sysChan.stopTyping()
     }
 });
 

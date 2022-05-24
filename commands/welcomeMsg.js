@@ -12,7 +12,7 @@ export default {
                 .setDescription('Sets Bothany\'s welcome message for new users in the server.')
                 .addStringOption(option =>
                     option.setName('message')
-                        .setDescription('The message to send to new users.')
+                        .setDescription('The message to send to new users. Use ${user} to insert the user\'s name in the message.')
                         .setRequired(true)))
         .addSubcommand(subcommand =>
             subcommand.setName('remove')
@@ -30,13 +30,12 @@ export default {
                 msg = 'removed welcome message'
             } else if (cmd.options.getSubcommand() === 'set') {
                 let welcome = cmd.options.getString('message')
-                success = await setWelcomeMsg(gID)
+                success = await setWelcomeMsg(gID, welcome)
                 msg = 'set welcome message to "' + welcome + '"'
             }
         } catch (err) {
             logError(err)
         } finally {
-            logDebug(success)
             await notifyCompletion(cmd, msg, success)
         }
     }

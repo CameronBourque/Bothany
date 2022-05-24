@@ -19,9 +19,9 @@ export async function createGuild(gID, gName = '', limit=5) {
         await setDoc(doc(db, "guilds", gID), {
             gName: gName,
             roles: [],
-            welcome_msg: "",
-            sounds_limit: limit,
-            poggers_kick: false,
+            welcomeMsg: "",
+            soundsLimit: limit,
+            poggersKick: false,
         })
         logDebug("Created document for guild " + gID + " with a sound limit of " + limit)
         return true
