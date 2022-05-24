@@ -24,3 +24,8 @@ export async function displayHelp(cmd) {
         content: help
     })
 }
+
+// Update information
+export async function sendUpdateInfo(bot) {
+
+}
