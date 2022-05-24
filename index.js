@@ -53,6 +53,7 @@ bot.once('ready', () => {
     logDebug("Commands deployed!")
 
     // Notify guilds of important update information
+
 });
 
 // Login the bot
@@ -73,7 +74,7 @@ bot.on('voiceStateUpdate', async (oldMember, newMember) => {
             if (newUserChannel === newUserChannel.guild.afkChannel) {  // Joined an AFK Channel
                 // Do nothing
             } else {    // Switched to another channel
-                let sound = await getSound(newUserChannel.guild.id, newMember.member.roles)
+                let sound = await getSound(newUserChannel.guild.id, newMember.member.roles.cache)
                 if (sound) {
                     await playSound(newUserChannel, sound)
                 }

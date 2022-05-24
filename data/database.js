@@ -53,7 +53,8 @@ export async function getSound(gID, roles) {
     try {
         if (roles) {
             let guildRoles = (await getDoc(doc(db, 'guilds', gID))).data().roles
-            roles.cache.forEach((role) => {
+
+            roles.forEach((role) => {
                 if (guildRoles[role.name]) {
                     result = guildRoles[role.name]
                 }
