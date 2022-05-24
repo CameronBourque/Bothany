@@ -85,7 +85,7 @@ bot.on('voiceStateUpdate', async (oldMember, newMember) => {
 bot.on('interactionCreate', async (interaction) => {
     // If it's a command we want to process it
     if (interaction.isCommand()) {
-        const cmd = bot.commands.find(element => element.name === interaction.commandName)
+        const cmd = bot.commands.get(interaction.commandName)
         if (cmd) {
             try {
                 logDebug(cmd)
