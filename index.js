@@ -67,14 +67,11 @@ bot.on('voiceStateUpdate', async (oldMember, newMember) => {
         } else {   // VC change
             let chanName = newUserChannel.name
             logDebug(newMember.member.user.username + ' joined ' + chanName + '!');
-            if(!await guildExists(newUserChannel.guildId)) {
-                await createGuild(newUserChannel.guildId, newUserChannel.guild.name)
-            }
 
             if (newUserChannel === newUserChannel.guild.afkChannel) {  // Joined an AFK Channel
                 // Do nothing
             } else {    // Switched to another channel
-                let sound = getSound(newUserChannel.guild.id, newMember.member.roles)
+                let sound = await getSound(newUserChannel.guild.id, newMember.member.roles)
                 if (sound) {
                     await playSound(newUserChannel, sound)
                 }
@@ -90,10 +87,6 @@ bot.on('interactionCreate', async (interaction) => {
         const cmd = bot.commands.get(interaction.commandName)
         if (cmd) {
             try {
-                if(!await guildExists(interaction.guildId)) {
-                    await createGuild(interaction.guildId, interaction.guild.name)
-                }
-
                 await cmd.execute(interaction)
             } catch(err) {
                 logError(err)
