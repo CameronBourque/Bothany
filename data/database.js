@@ -19,16 +19,16 @@ export async function guildExists(gID) {
 }
 
 // Create the guild in the database
-export async function createGuild(gID, gName = '', limit=5) {
+export async function createGuild(gID, gName = '') {
     try {
         await setDoc(doc(db, "guilds", gID), {
             gName: gName,
-            roles: [],
+            roles: {},
             welcomeMsg: "",
-            soundsLimit: limit,
-            poggersKick: false,
+            kickableWords: [],
+            spam: false
         })
-        logDebug("Created document for guild " + gID + " with a sound limit of " + limit)
+        logDebug("Created document for guild " + gID)
         return true
     } catch(err) {
         logError(err)
@@ -38,8 +38,6 @@ export async function createGuild(gID, gName = '', limit=5) {
 
 export async function removeGuild(gID) {
     try {
-        await deleteDir(gID)
-
         await deleteDoc(doc(db, "guilds", gID))
         return true
     } catch (err) {
@@ -168,6 +166,16 @@ export async function removeWelcomeMsg(gID) {
         })
 
         return !(await getDoc(doc(db, 'guilds', gID))).data().welcomeMsg
+    } catch (err) {
+        logError(err)
+    }
+
+    return false
+}
+
+export async function doSpam(gID) {
+    try {
+        return (await getDoc(doc(db, 'guilds', gID))).data().spam
     } catch (err) {
         logError(err)
     }

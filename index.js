@@ -3,12 +3,24 @@ import path from 'path';
 import {fileURLToPath} from 'url';
 import {playSound} from "./audio.js";
 import {logDebug, logError} from "./logger.js";
-import {checkSound, createGuild, getSound, getWelcomeMsg, guildExists, isKickable, removeGuild, removeSound, updateRole}
+import {
+    checkSound,
+    createGuild,
+    doSpam,
+    getSound,
+    getWelcomeMsg,
+    guildExists,
+    isKickable,
+    removeGuild,
+    removeSound,
+    updateRole
+}
     from "./data/database.js";
 import Discord, {Permissions} from "discord.js";
 import 'dotenv/config';
 import {REST} from "@discordjs/rest";
 import {Routes} from "discord-api-types/v9";
+import {sendUpdateInfo} from "./messageSender.js";
 
 // Fix dirname since we can't use require
 const __filename = fileURLToPath(import.meta.url)
@@ -20,6 +32,8 @@ botIntents.add(Discord.Intents.FLAGS.GUILDS,
     Discord.Intents.FLAGS.GUILD_MEMBERS,
     Discord.Intents.FLAGS.GUILD_VOICE_STATES,
     Discord.Intents.FLAGS.GUILD_MESSAGES,
+    Discord.Intents.FLAGS.DIRECT_MESSAGES,
+    Discord.Intents.FLAGS.DIRECT_MESSAGE_TYPING,
 )
 const bot = new Discord.Client({ intents: botIntents });
 
@@ -53,7 +67,7 @@ bot.once('ready', () => {
     logDebug("Commands deployed!")
 
     // Notify guilds of important update information
-
+    sendUpdateInfo(bot)
 });
 
 // Login the bot
@@ -105,6 +119,13 @@ bot.on('messageCreate', async (message) => {
     if(!message.author.bot && !message.system && !message.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
         let kick = await isKickable(message.guildId, message.content)
         if(kick) {
+            if(await doSpam(message.guildId)) {
+                let i = 0
+                while(i < 10) {
+                    await message.author.send('Bad word!')
+                    i++
+                }
+            }
             message.guild.members.kick(message, message.author.username + ' said a bad word! (' + kick + ')')
         }
     }
@@ -139,7 +160,7 @@ bot.on('roleUpdate', async (oldRole, newRole) => {
 bot.on('roleDelete', async (role) => {
     if(await checkSound(role.guild.id, role.name)) {
         await removeSound(role.guild.id, role.name)
-        logDebug('Role' + role.name + ' was removed')
+        logDebug('Role ' + role.name + ' was removed')
     }
 })
 
@@ -153,6 +174,6 @@ bot.on('guildDelete', async (guild) => {
 // Handle joining to guild
 bot.on('guildCreate', async (guild) => {
     if(!await guildExists(guild.id)) {
-        await createGuild(guild.id)
+        await createGuild(guild.id, guild.name)
     }
 })
