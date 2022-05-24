@@ -1,6 +1,6 @@
 import firebaseApp from "../firebase.js";
 import {collection, getDocs, getDoc, getFirestore, query, where, setDoc, doc, deleteDoc, updateDoc, arrayUnion,
-    arrayRemove} from "firebase/firestore";
+    arrayRemove, deleteField} from "firebase/firestore";
 import {logDebug, logError} from "../logger.js";
 import {deleteDir, deleteFile, downloadFile, uploadFile} from "./storage.js";
 
@@ -49,28 +49,12 @@ export async function removeGuild(gID) {
     return false
 }
 
-async function reachedLimit(gID) {
-    try {
-        const snap = await getDoc(doc(db, 'guilds', gID))
-        if (!snap.exists()) {
-            logError('Document doesn\'t exist for ' + gID)
-            return true
-        }
-
-        return snap.data().soundLimit > snap.data().roles.size()
-    } catch (err) {
-        logError(err)
-    }
-
-    return true
-}
-
 export async function getSound(gID, roles) {
     try {
         if (roles) {
             let guildRoles = (await getDoc(doc(db, 'guilds', gID))).data().roles
             roles.cache.forEach((role) => {
-                if (guildRoles.includes(role.name)) {
+                if (guildRoles[role.name]) {
                     return downloadFile(gID, role.name)
                 }
             })
@@ -86,37 +70,7 @@ export async function checkSound(gID, role) {
     try {
         let guildRoles = (await getDoc(doc(db, 'guilds', gID))).data().roles
 
-        logDebug(guildRoles)
-        return guildRoles.has(role)
-    } catch (err) {
-        logError(err)
-    }
-
-    return false
-}
-
-async function addSound(gID, role, sound) {
-    try {
-        if (!await reachedLimit(gID)) {
-            const gDoc = doc(db, 'guilds', gID)
-
-            await updateDoc(gDoc, {
-                roles: arrayUnion(role)
-            })
-        }
-        return await uploadFile(gID, sound, role)
-    } catch(err) {
-        logError(err)
-    }
-
-    return false
-}
-
-async function updateSound(gID, role, sound) {
-    try {
-        if (!await deleteFile(gID, role))
-            return null
-        return await uploadFile(gID, sound, role)
+        return guildRoles[role]
     } catch (err) {
         logError(err)
     }
@@ -125,22 +79,32 @@ async function updateSound(gID, role, sound) {
 }
 
 export async function setSound(gID, role, sound) {
-    if(await checkSound(gID, role)) {
-        return await updateSound(gID, role, sound)
-    } else {
-        return await addSound(gID, role, sound)
+    try {
+        const gDoc = doc(db, 'guilds', gID)
+
+        await updateDoc(gDoc, {
+            [`roles.${role}`]: sound.url
+        })
+
+        return true
+    } catch (err) {
+        logError(err)
     }
+
+    return false
 }
 
 export async function removeSound(gID, role) {
     try {
         const gDoc = doc(db, 'guilds', gID)
 
-        await updateDoc(gDoc, {
-            roles: arrayRemove(role)
-        })
+        if(await checkSound(gID, role)) {
+            await updateDoc(gDoc, {
+                [`roles.${role}`]: deleteField()
+            })
+        }
 
-        return await deleteFile(gID, role)
+        return true
     } catch (err) {
         logError(err)
     }
