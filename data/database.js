@@ -54,12 +54,18 @@ async function reachedLimit(gID) {
 }
 
 export async function getSound(gID, roles) {
-    let guildRoles = (await getDoc(doc(db, 'guilds', gID))).data().roles
-    roles.forEach((role) => {
-        if(guildRoles.has(role)) {
-            return downloadFile(gID, role)
+    try {
+        if (roles) {
+            let guildRoles = (await getDoc(doc(db, 'guilds', gID))).data().roles
+            roles.cache.forEach((role) => {
+                if (guildRoles.includes(role.name)) {
+                    return downloadFile(gID, role.name)
+                }
+            })
         }
-    })
+    } catch (err) {
+        logError(err)
+    }
 
     return null
 }
