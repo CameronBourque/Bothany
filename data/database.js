@@ -118,11 +118,17 @@ export async function getWelcomeMsg(gID) {
 export async function setWelcomeMsg(gID, msg) {
     const gDoc = doc(db, 'guilds', gID)
 
-    await updateDoc(gDoc, {
-        welcomeMsg: msg
-    })
+    try {
+        await updateDoc(gDoc, {
+            welcomeMsg: msg
+        })
 
-    return (await getDoc(doc(db, 'guilds', gID))).data().welcomeMsg === msg
+        return (await getDoc(doc(db, 'guilds', gID))).data().welcomeMsg === msg
+    } catch(err) {
+        logError(err)
+    }
+
+    return false
 }
 
 export async function removeWelcomeMsg(gID) {

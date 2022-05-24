@@ -88,7 +88,6 @@ bot.on('interactionCreate', async (interaction) => {
         const cmd = bot.commands.get(interaction.commandName)
         if (cmd) {
             try {
-                logDebug(cmd)
                 await cmd.execute(interaction)
             } catch(err) {
                 logError(err)
