@@ -8,9 +8,15 @@ const db = getFirestore(firebaseApp);
 
 // Check if the guild exists in the database
 export async function guildExists(gID) {
-    const q  = query(collection(db, "guilds"), where("gID", "==", parseInt(gID)))
-    const snap = await getDocs(q)
-    return snap.docs.length > 0;
+    try {
+        const q = query(collection(db, "guilds"), where("gID", "==", parseInt(gID)))
+        const snap = await getDocs(q)
+        return snap.docs.length > 0;
+    } catch (err) {
+        logError(err)
+    }
+
+    return false
 }
 
 // Create the guild in the database
@@ -44,13 +50,19 @@ export async function removeGuild(gID) {
 }
 
 async function reachedLimit(gID) {
-    const snap = await getDoc(doc(db, 'guilds', gID))
-    if(!snap.exists()) {
-        logError('Document doesn\'t exist for ' + gID)
-        return true
+    try {
+        const snap = await getDoc(doc(db, 'guilds', gID))
+        if (!snap.exists()) {
+            logError('Document doesn\'t exist for ' + gID)
+            return true
+        }
+
+        return snap.data().soundLimit > snap.data().roles.size()
+    } catch (err) {
+        logError(err)
     }
 
-    return snap.data().soundLimit > snap.data().roles.size()
+    return true
 }
 
 export async function getSound(gID, roles) {
@@ -71,26 +83,45 @@ export async function getSound(gID, roles) {
 }
 
 export async function checkSound(gID, role) {
-    let guildRoles = (await getDoc(doc(db, 'guilds', gID))).data().roles
+    try {
+        let guildRoles = (await getDoc(doc(db, 'guilds', gID))).data().roles
 
-    return guildRoles.has(role)
+        logDebug(guildRoles)
+        return guildRoles.has(role)
+    } catch (err) {
+        logError(err)
+    }
+
+    return false
 }
 
 async function addSound(gID, role, sound) {
-    if(!await reachedLimit(gID)) {
-        const gDoc = doc(db, 'guilds', gID)
+    try {
+        if (!await reachedLimit(gID)) {
+            const gDoc = doc(db, 'guilds', gID)
 
-        await updateDoc(gDoc, {
-            roles: arrayUnion(role)
-        })
+            await updateDoc(gDoc, {
+                roles: arrayUnion(role)
+            })
+        }
+        return await uploadFile(gID, sound, role)
+    } catch(err) {
+        logError(err)
     }
+
     return false
 }
 
 async function updateSound(gID, role, sound) {
-    if(!await deleteFile(gID, role))
-        return null
-    return await uploadFile(gID, sound, role)
+    try {
+        if (!await deleteFile(gID, role))
+            return null
+        return await uploadFile(gID, sound, role)
+    } catch (err) {
+        logError(err)
+    }
+
+    return false
 }
 
 export async function setSound(gID, role, sound) {
@@ -102,23 +133,35 @@ export async function setSound(gID, role, sound) {
 }
 
 export async function removeSound(gID, role) {
-    const gDoc = doc(db, 'guilds', gID)
+    try {
+        const gDoc = doc(db, 'guilds', gID)
 
-    await updateDoc(gDoc, {
-        roles: arrayRemove(role)
-    })
+        await updateDoc(gDoc, {
+            roles: arrayRemove(role)
+        })
 
-    return await deleteFile(gID, role)
+        return await deleteFile(gID, role)
+    } catch (err) {
+        logError(err)
+    }
+
+    return false
 }
 
 export async function getWelcomeMsg(gID) {
-    return (await getDoc(doc(db, 'guilds', gID))).data().welcomeMsg
+    try {
+        return (await getDoc(doc(db, 'guilds', gID))).data().welcomeMsg
+    } catch (err) {
+        logError(err)
+    }
+
+    return ''
 }
 
 export async function setWelcomeMsg(gID, msg) {
-    const gDoc = doc(db, 'guilds', gID)
-
     try {
+        const gDoc = doc(db, 'guilds', gID)
+
         await updateDoc(gDoc, {
             welcomeMsg: msg
         })
@@ -132,13 +175,19 @@ export async function setWelcomeMsg(gID, msg) {
 }
 
 export async function removeWelcomeMsg(gID) {
-    const gDoc = doc(db, 'guilds', gID)
+    try {
+        const gDoc = doc(db, 'guilds', gID)
 
-    await updateDoc(gDoc, {
-        welcomeMsg: ""
-    })
+        await updateDoc(gDoc, {
+            welcomeMsg: ""
+        })
 
-    return !(await getDoc(doc(db, 'guilds', gID))).data().welcomeMsg
+        return !(await getDoc(doc(db, 'guilds', gID))).data().welcomeMsg
+    } catch (err) {
+        logError(err)
+    }
+
+    return false
 }
 
 export async function togglePoggerKick(gID, value) {
