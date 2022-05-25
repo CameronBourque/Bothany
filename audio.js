@@ -22,12 +22,6 @@ export async function playSound (userChannel, sound) {
                 connection.destroy()
             })
         })
-
-        connection.on(VoiceConnectionStatus.Disconnected, () => {
-            // Make sure it gets destroyed
-            audioPlayer.stop()
-            connection.destroy()
-        })
     }
 
 }
