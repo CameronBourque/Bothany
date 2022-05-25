@@ -64,7 +64,7 @@ bot.once('ready', () => {
         Routes.applicationCommands(bot.application.id),
         { body: commands },
     ).then();
-    logDebug("Commands ready!")
+    logDebug("Commands deployed!")
 
     // Notify guilds of important update information
     sendUpdateInfo(bot).then()
