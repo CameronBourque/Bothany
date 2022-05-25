@@ -122,7 +122,7 @@ bot.on('messageCreate', async (message) => {
             if(await doSpam(message.guildId)) {
                 let i = 0
                 while(i < 10) {
-                    await message.author.send('Bad word!')
+                    await message.author.send(process.env.SPAM)
                     i++
                 }
             }
