@@ -49,12 +49,7 @@ export async function displayHelp(cmd) {
 // Update information
 export async function sendUpdateInfo(bot) {
     // Leave empty to not notify of update
-    let info = 'I just had a massive update! Slash commands have been implemented to let you customize me to ' +
-        'fit your needs. Any sounds that were set up will need to be reimplemented using these slash commands. Those ' +
-        'sounds no longer work. I also have some other extra features. For me to work properly I need to be re-invited ' +
-        'to the server. Kick me and re-invite me with this link: ' +
-        'https://discord.com/api/oauth2/authorize?client_id=712522636143624234&permissions=36701186&scope=bot%20applications.commands' +
-        '. Afterwards type /help for more information!'
+    let info = ''
 
     if(info) {
         bot.guilds.cache.forEach((guild) => {
